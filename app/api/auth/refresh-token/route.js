@@ -1,15 +1,16 @@
 import { NextResponse } from 'next/server';
+import { SignJWT, jwtVerify } from 'jose';
 import db from "@/lib/db";
 
-export async function POST(req) {
-  const refreshToken = req.cookies.get('refreshToken');
+export async function GET(req) {
+  const refreshToken = req.cookies.get('refreshToken')?.value;
   if (!refreshToken) return NextResponse.json({ message: 'Token tidak ditemukan' }, { status: 401 });
-
+  
   try {
-    // 1️⃣ Verifikasi refresh token
+    // Verifikasi refresh token
     const { payload } = await jwtVerify(
       refreshToken, 
-      new TextEncoder().encode(process.env.JWT_REFRESH_SECRET)
+      new TextEncoder().encode(process.env.REFRESH_TOKEN_SECRET)
     );
     if (!payload) return NextResponse.json({ message: 'Token tidak valid' }, { status: 401 });
 
@@ -28,7 +29,15 @@ export async function POST(req) {
       .setExpirationTime('15m')
       .sign(new TextEncoder().encode(process.env.NEXT_PUBLIC_ACCESS_TOKEN_SECRET));
 
-    return NextResponse.json({ accessToken });
+    const response = NextResponse.json({ accessToken });
+    response.cookies.set('accessToken', accessToken, {
+      httpOnly: false,  // Untuk keamanan, hanya bisa diakses oleh server
+      secure: process.env.NODE_ENV === 'production',  // Set secure di production
+      maxAge: 15 * 60, // Set waktu kadaluarsa 15 menit
+      path: '/',
+    });
+
+    return response;
   } catch (error) {
     console.error('Refresh Token error:', error);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
