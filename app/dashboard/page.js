@@ -1,45 +1,15 @@
 "use client"
 
 import { Button } from '@/components/ui/button';
-import React, { useEffect, useState } from 'react'
+import React, { useContext } from 'react'
 import { useRouter } from 'next/navigation'
-import { jwtVerify } from 'jose';
-import Cookies from 'js-cookie';
+import { AuthContext } from './auth-context';
 
 const Dashboard = () => {
   const router = useRouter();
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      setLoading(true);
-      try {
-        // Ambil token dari cookies
-        const accessToken = Cookies.get('accessToken');
-        console.log(accessToken);
-
-        // Verifikasi JWT token
-        const { payload } = await jwtVerify(
-          accessToken,
-          new TextEncoder().encode(process.env.NEXT_PUBLIC_ACCESS_TOKEN_SECRET)
-        );
-        console.log(payload)
-
-        setUser(payload);
-      } catch (err) {
-        console.error('Error saat mengambil data user:', err);
-        setError('Token tidak valid atau telah kedaluwarsa');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUserData();
-  }, []);
+  const { user } = useContext(AuthContext);
   
-  const onSubmit = async () => {
+  const onLogout = async () => {
     try {
       const data ={
         id: user.id
@@ -65,13 +35,10 @@ const Dashboard = () => {
     }
   };
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error}</p>;
-
   return (
-    <div>
+    <div className="p-5">
       <h1>Selamat Datang di Dashboard, Email: Welcome, {user ? user.email : ''}</h1>
-      <Button type="button" onClick={() => onSubmit()}>Logout</Button>
+      <Button type="button" onClick={() => onLogout()}>Logout</Button>
     </div>
   )
 }
