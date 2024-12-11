@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod"
+import Image from "next/image";
 
 const formSchema = z.object({
   email: z.string().email("Email tidak valid").min(1, "Email tidak boleh kosong"),
@@ -55,10 +56,13 @@ const Login = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="w-full max-w-md p-8 space-y-4 bg-white shadow-lg rounded-lg mx-5">
-        <h1 className="text-2xl font-bold text-center">Login</h1>
-
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-black">
+      <div className="w-full max-w-md p-8 space-y-4 bg-white dark:bg-slate-950 shadow-lg rounded-lg mx-5">
+        <div class="flex flex-col space-y-2 items-center">
+          <Image src="/img/logo.png" width={100} height={100} alt="Logo" />
+          <h1 class="text-2xl font-semibold tracking-tight">Login</h1>
+          <p class="text-sm text-muted-foreground">Enter your email and password</p>
+        </div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             {/* Form Email */}
@@ -103,19 +107,13 @@ const Login = () => {
 
             <Button 
               type="submit" 
-              className="w-full bg-blue-600 hover:bg-blue-700"
+              className="w-full"
               disabled={loading}
             >
               {loading ? "Loading..." : "Login"}
             </Button>
           </form>
         </Form>
-
-        <div className="text-center text-sm mt-4">
-          <p>
-            Don't have an account? <a href="/signup" className="text-blue-600">Sign up</a>
-          </p>
-        </div>
       </div>
     </div>
   );
