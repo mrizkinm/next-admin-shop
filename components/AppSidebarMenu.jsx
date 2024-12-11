@@ -106,7 +106,7 @@ const navItems = [
   }
 ];
 
-export default function AppSidebarMenu() {
+const AppSidebarMenu = () => {
   const pathname = usePathname();
 
   return (
@@ -267,3 +267,5 @@ export default function AppSidebarMenu() {
     </Sidebar>
   );
 }
+
+export default AppSidebarMenu;
