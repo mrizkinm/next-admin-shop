@@ -24,7 +24,7 @@ export async function GET(req) {
     }
 
     // Buat access token baru
-    const accessToken = await new SignJWT({ id: user.id, email: user.email })
+    const accessToken = await new SignJWT({ id: user.id, name: user.name, email: user.email })
       .setProtectedHeader({ alg: 'HS256' })
       .setExpirationTime('15m')
       .sign(new TextEncoder().encode(process.env.NEXT_PUBLIC_ACCESS_TOKEN_SECRET));
