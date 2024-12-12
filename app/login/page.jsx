@@ -58,10 +58,10 @@ const Login = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-black">
       <div className="w-full max-w-md p-8 space-y-4 bg-white dark:bg-slate-950 shadow-lg rounded-lg mx-5">
-        <div class="flex flex-col space-y-2 items-center">
+        <div className="flex flex-col space-y-2 items-center">
           <Image src="/img/logo.png" width={100} height={100} alt="Logo" />
-          <h1 class="text-2xl font-semibold tracking-tight">Login</h1>
-          <p class="text-sm text-muted-foreground">Enter your email and password</p>
+          <h1 className="text-2xl font-semibold tracking-tight">Gundam Market</h1>
+          <p className="text-sm text-muted-foreground">Enter your email and password</p>
         </div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
