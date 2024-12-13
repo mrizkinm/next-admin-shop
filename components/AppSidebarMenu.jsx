@@ -1,5 +1,6 @@
 'use client';
 
+import { UserDataContext } from '@/app/dashboard/user-data-context';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   Collapsible,
@@ -33,88 +34,79 @@ import {
 import {
   BadgeCheck,
   Bell,
+  Boxes,
+  Captions,
   ChevronRight,
   ChevronsUpDown,
-  CreditCard,
+  Cog,
+  Edit,
   GalleryVerticalEnd,
-  LogOut
+  User,
+  Home,
+  ToyBrick
 } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import React from 'react';
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react"
+import React, { useContext } from 'react';
 
 export const company = {
-  name: 'Acme Inc',
-  logo: GalleryVerticalEnd,
-  plan: 'Enterprise'
+  name: 'Gundam Market',
+  plan: 'Welcome admin'
 };
 
 const navItems = [
   {
     title: 'Dashboard',
-    url: '/dashboard/overview',
+    url: '/dashboard',
     icon: <Home />,
     isActive: false,
-    shortcut: ['d', 'd'],
-    items: [] // Empty array as there are no child items for Dashboard
+    items: []
   },
   {
-    title: 'Employee',
-    url: '/dashboard/employee',
-    icon: <Search />,
-    shortcut: ['e', 'e'],
+    title: 'Products',
+    url: '/dashboard/products',
+    icon: <Boxes />,
     isActive: false,
-    items: [] // No child items
+    items: []
   },
   {
-    title: 'Product',
-    url: '/dashboard/product',
-    icon: <Settings />,
-    shortcut: ['p', 'p'],
+    title: 'Categories',
+    url: '/dashboard/categories',
+    icon: <Captions />,
     isActive: false,
-    items: [] // No child items
+    items: []
   },
   {
     title: 'Account',
     url: '#', // Placeholder as there is no direct link for the parent
-    icon: <Inbox />,
+    icon: <User />,
     isActive: false,
-
     items: [
       {
         title: 'Profile',
         url: '/dashboard/profile',
-        icon: 'userPen',
-        shortcut: ['m', 'm']
+        icon: <Edit />
       },
       {
-        title: 'Login',
-        shortcut: ['l', 'l'],
-        url: '/',
-        icon: 'login'
+        title: 'Settings',
+        url: '/dashboard/settings',
+        icon: <Cog />
       }
     ]
-  },
-  {
-    title: 'Kanban',
-    url: '/dashboard/kanban',
-    icon:  <Calendar />,
-    shortcut: ['k', 'k'],
-    isActive: false,
-    items: [] // No child items
   }
 ];
 
 const AppSidebarMenu = () => {
   const pathname = usePathname();
+  const { user } = useContext(UserDataContext);
 
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
         <div className="flex gap-2 py-2 text-sidebar-accent-foreground ">
-          <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-            <company.logo className="size-4" />
+          <div className="flex aspect-square size-8 items-center justify-center rounded-lg text-sidebar-primary-foreground">
+            <Image src="/img/gundam.png" width={30} height={30} alt="Image" />
           </div>
           <div className="grid flex-1 text-left text-sm leading-tight">
             <span className="truncate font-semibold">{company.name}</span>
@@ -192,19 +184,19 @@ const AppSidebarMenu = () => {
                 >
                   <Avatar className="h-8 w-8 rounded-lg">
                     <AvatarImage
-                      src="/window.svg"
-                      alt="Joni"
+                      src="/img/logo.png"
+                      alt= {user?.name}
                     />
                     <AvatarFallback className="rounded-lg">
-                      JN
+                      {user?.name[0]}
                     </AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-semibold">
-                      Joni
+                      {user?.name}
                     </span>
                     <span className="truncate text-xs">
-                      joni@gmail.com
+                      {user?.email}
                     </span>
                   </div>
                   <ChevronsUpDown className="ml-auto size-4" />
@@ -220,19 +212,19 @@ const AppSidebarMenu = () => {
                   <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                     <Avatar className="h-8 w-8 rounded-lg">
                       <AvatarImage
-                        src="/window.svg"
-                        alt="Joni"
+                        src="/img/logo.png"
+                        alt= {user?.name}
                       />
                       <AvatarFallback className="rounded-lg">
-                        JN
+                        {user?.name[0]}
                       </AvatarFallback>
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
                       <span className="truncate font-semibold">
-                        Joni
+                        {user?.name}
                       </span>
                       <span className="truncate text-xs">
-                        joni@gmail.com
+                        {user?.email}
                       </span>
                     </div>
                   </div>
@@ -245,19 +237,10 @@ const AppSidebarMenu = () => {
                     Account
                   </DropdownMenuItem>
                   <DropdownMenuItem>
-                    <CreditCard />
-                    Billing
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
                     <Bell />
                     Notifications
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <LogOut />
-                  Log out
-                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarMenuItem>
