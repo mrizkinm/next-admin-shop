@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react'
+import React, { useContext } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -13,18 +13,53 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
+import { UserDataContext } from '@/app/dashboard/user-data-context';
+import { useRouter } from 'next/navigation';
+import { Cog, LogOut, User, UserCircle } from 'lucide-react';
 
 const UserNav = () => {
+  const router = useRouter();
+  const { user } = useContext(UserDataContext);
+
+  const onLogout = async () => {
+    try {
+      const data ={
+        id: user.id
+      }
+      // Perform login request (replace with actual API call)
+      const response = await fetch("/api/auth/logout", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      
+      const responseData = await response.json();
+
+      if (response.ok) {
+        // Redirect to dashboard or other protected page on success
+        router.push("/login");
+      } else {
+        toast.error(responseData.error);
+      }
+    } catch (error) {
+      console.log(error)
+    } finally {
+    }
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-          <Avatar className="h-8 w-8">
+        <Button variant="ghost" className="relative border h-10 w-10 rounded-full">
+          <Avatar>
             <AvatarImage
-              src="/window.svg"
-              alt="Joni"
+              src="/img/logo.png"
+              alt={user?.name}
+              className="p-1"
             />
-            <AvatarFallback>JN</AvatarFallback>
+            <AvatarFallback>{user?.name[0]}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
@@ -32,10 +67,10 @@ const UserNav = () => {
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">
-              Joni
+              {user?.name}
             </p>
             <p className="text-xs leading-none text-muted-foreground">
-              joni@gmail.com
+              {user?.email}
             </p>
           </div>
         </DropdownMenuLabel>
@@ -43,22 +78,17 @@ const UserNav = () => {
         <DropdownMenuGroup>
           <DropdownMenuItem>
             Profile
-            <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            Billing
-            <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
+            <DropdownMenuShortcut><User /></DropdownMenuShortcut>
           </DropdownMenuItem>
           <DropdownMenuItem>
             Settings
-            <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+          <DropdownMenuShortcut><Cog /></DropdownMenuShortcut>
           </DropdownMenuItem>
-          <DropdownMenuItem>New Team</DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => {}}>
+        <DropdownMenuItem className="cursor-pointer" onClick={() => onLogout()}>
           Log out
-          <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+          <DropdownMenuShortcut><LogOut /></DropdownMenuShortcut>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
