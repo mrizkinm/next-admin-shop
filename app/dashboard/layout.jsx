@@ -3,8 +3,8 @@ import {
   SidebarProvider
 } from "@/components/ui/sidebar"
 import { cookies } from 'next/headers';
-import AppSidebarMenu from "@/components/AppSidebarMenu";
-import Header from "@/components/Header";
+import AppSidebarMenu from "@/components/app-sidebar-menu";
+import Header from "@/components/header";
 import { UserDataProvider } from "./user-data-context";
 
 export const metadata = {
