@@ -3,9 +3,13 @@ import { NextResponse } from "next/server"
 
 export async function GET(req) {
   try {
-    const category = await db.category.findMany()
+    const product = await db.product.findMany({
+      include: {
+        category: true // Memuat data dari relasi Category
+      },
+    })
 
-    return NextResponse.json(category)
+    return NextResponse.json(product)
   } catch (error) {
     console.error("Error get data", error)
     return new NextResponse("Internal Error", {status: 500})

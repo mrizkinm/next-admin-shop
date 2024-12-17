@@ -24,7 +24,7 @@ export async function GET(req, {params}) {
 }
 
 const formSchema = z.object({
-  name: z.string().min(1),
+  name: z.string().min(1)
 });
 
 export async function PATCH(req, {params}) {
@@ -39,10 +39,6 @@ export async function PATCH(req, {params}) {
 
     if (!result.success) {
       return NextResponse.json({ error: result.error.format().name?._errors[0] }, { status: 400 });
-    }
-
-    if (!name) {
-      return new NextResponse({ error: "Harus ada nama" }, {status: 400})
     }
 
     const category = await db.category.updateMany({
