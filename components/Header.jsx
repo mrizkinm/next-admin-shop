@@ -1,8 +1,8 @@
 import React from 'react'
 import { SidebarTrigger } from './ui/sidebar';
 import { Separator } from './ui/separator';
-import UserNav from './UserNav';
-import ThemeButton from './ThemeButton';
+import ThemeButton from './theme-button';
+import UserNav from './user-nav';
 
 const Header = () => {
   return (
