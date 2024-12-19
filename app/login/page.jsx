@@ -9,6 +9,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod"
 import Image from "next/image";
+import toast from "react-hot-toast";
 
 const formSchema = z.object({
   email: z.string().email("Email tidak valid").min(1, "Email tidak boleh kosong"),
@@ -43,10 +44,12 @@ const Login = () => {
       const responseData = await response.json();
 
       if (response.ok) {
-        // Redirect to dashboard or other protected page on success
-        router.push("/dashboard");
+        toast.success('Login sukses');
+        setTimeout(() => {
+          router.push("/dashboard");
+        }, 1000);
       } else {
-        alert(responseData.error);
+        toast.error(responseData.error);
       }
     } catch (error) {
       console.log(error)
@@ -59,8 +62,8 @@ const Login = () => {
     <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-black">
       <div className="w-full max-w-md p-8 space-y-4 bg-white dark:bg-slate-950 shadow-lg rounded-lg mx-5">
         <div className="flex flex-col space-y-2 items-center">
-          <Image src="/img/logo.png" width={100} height={100} alt="Logo" />
-          <h1 className="text-2xl font-semibold tracking-tight">Gundam Market</h1>
+          <Image src="/img/gundam.png" width={100} height={100} alt="Logo" />
+          <h1 className="text-2xl font-semibold tracking-tight">Gundam Shop</h1>
           <p className="text-sm text-muted-foreground">Enter your email and password</p>
         </div>
         <Form {...form}>
