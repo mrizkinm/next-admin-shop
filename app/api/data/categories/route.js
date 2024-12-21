@@ -28,7 +28,14 @@ export async function POST(req) {
     const result = formSchema.safeParse({ name });
     
     if (!result.success) {
-      return NextResponse.json({ error: result.error.format().name?._errors[0] }, { status: 400 });
+      const errors = result.error.flatten().fieldErrors;
+
+      // Ubah format menjadi { fieldName: "Error message" }
+      const simplifiedErrors = Object.fromEntries(
+        Object.entries(errors).map(([key, value]) => [key, value?.[0] || 'Invalid value'])
+      );
+
+      return NextResponse.json({ errors: simplifiedErrors }, { status: 400 });
     }
 
     const category = await db.category.create({
