@@ -12,14 +12,14 @@ export const columns = [
     cell: ({ row }) => row.index + 1,  // Mengambil index dan menambahkan 1 (untuk mulai dari 1, bukan 0)
   },
   {
-    accessorKey: "createdAt",
-    header: "Date",
-    cell: ({row}) => format(row.original.createdAt, 'dd MMM yyyy HH:mm')
-  },
-  {
     accessorKey: "images",
     header: "Image",
     cell: ({row}) => <img src={row.original.images[0].url} className="rounded-sm w-16 h-16 object-cover" alt="Image" title={row.original.name} />
+  },
+  {
+    accessorKey: "createdAt",
+    header: "Date",
+    cell: ({row}) => format(row.original.createdAt, 'dd MMM yyyy HH:mm')
   },
   {
     accessorKey: "name",
