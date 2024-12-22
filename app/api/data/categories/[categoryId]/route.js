@@ -63,14 +63,14 @@ export async function DELETE(req, {params}) {
       return new NextResponse({ error: "Harus ada category id" }, {status: 400})
     }
 
-    const category = await db.category.deleteMany({
+    await db.category.deleteMany({
       where: {
-        id: params.categoryId
+        id: parseInt(params.categoryId)
       }
     })
-    return NextResponse.json(category);
+    return NextResponse.json({ msg: "Success to delete data" });
   } catch (error) {
-    console.error('Error delete data', error);
+    console.log('Error delete data', error);
     return new NextResponse({ error: "Internal server error" }, {status: 500})
   }
 }

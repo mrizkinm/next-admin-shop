@@ -24,7 +24,7 @@ export async function GET(req) {
     return NextResponse.json(product)
   } catch (error) {
     console.error("Error get data", error)
-    return new NextResponse("Internal Error", {status: 500})
+    return NextResponse.json({ errors: "Internal Error" }, {status: 500})
   }
 }
 
@@ -113,6 +113,6 @@ export async function POST(req) {
     return NextResponse.json(product)
   } catch (error) {
     console.log("ERROR CATEGORY POST", error)
-    return new NextResponse("Internal Error", {status: 500})
+    return NextResponse.json({ errors: "Internal Error" }, {status: 500})
   }
 }
