@@ -2,37 +2,49 @@
 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
-import { Copy, Edit, MoreHorizontal, Trash } from "lucide-react"
+import { Edit, MoreHorizontal, Trash } from "lucide-react"
 import toast from "react-hot-toast"
-import { useParams, useRouter } from "next/navigation"
+import React, { useRouter } from "next/navigation"
 import { useState } from "react"
+import { AlertModal } from "@/components/alert-modal"
 
 export const CellAction = ({data}) => {
   const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
   const router = useRouter()
-  const params = useParams()
 
-  const onCopy = (id) => {
-    navigator.clipboard.writeText(id);
-    toast.success("Banner id berhasil dicopy")
+  const onDelete = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch(`/api/data/categories/${data.id}`, {
+        method: "DELETE"
+      });
+
+      const responseData = await response.json();
+
+      if (response.ok) {
+        router.refresh();
+        toast.success('Success to delete data');
+      } else {
+        toast.error(responseData.error);
+      }
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setLoading(false)
+    }
   }
-
-  // const onDelete = async () => {
-  //   try {
-  //     setLoading(true)
-  //     await axios.delete(`/api/data/categories/${data.id}`);
-  //     router.refresh()
-  //     toast.success('Banner berhasil dihapus')
-  //   } catch (error) {
-  //     setLoading(false)
-  //     toast.error("Ada error")
-  //   } finally {
-  //     setLoading(false)
-  //   }
-  // }
 
   return (
     <>
+      <AlertModal
+        title="Delete Category"
+        description="Are you sure to delete this category?"
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        onConfirm={() => onDelete()}
+        loading={loading}
+      />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
