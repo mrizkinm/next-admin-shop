@@ -37,14 +37,8 @@ const formSchema = z.object({
   .refine((files) => files.every((file) => file.type.startsWith('image/')), {
     message: 'Only image files are allowed.',
   }),
-  price: z
-  .string()
-  .min(1)
-  .transform((val) => Number(val))  // Transform string to number
-  .refine((val) => !isNaN(val), {
-    message: 'Price must be a valid number',
-  }),
-  categoryId: z.string().min(1),
+  price: z.coerce.number().min(1),
+  categoryId: z.coerce.number().min(1),
   isFeatured: z.string().optional(),
   isArchived: z.string().optional(),
   description: z.string().min(1),
@@ -67,10 +61,10 @@ export async function POST(req) {
       images.push(formData.getAll('images')[i]);
     }
 
-    const formResult = formSchema.safeParse({ name, images, categoryId, price, description, isFeatured, isArchived });
+    const result = formSchema.safeParse({ name, images, categoryId, price, description, isFeatured, isArchived });
     
-    if (!formResult.success) {
-      const errors = formResult.error.flatten().fieldErrors;
+    if (!result.success) {
+      const errors = result.error.flatten().fieldErrors;
 
       // Ubah format menjadi { fieldName: "Error message" }
       const simplifiedErrors = Object.fromEntries(
@@ -84,7 +78,7 @@ export async function POST(req) {
       data: {
         name,
         categoryId: parseInt(categoryId),
-        price: parseFloat(price), // Pastikan harga diubah menjadi float
+        price: parseInt(price),
         description,
         isFeatured: isFeatured === "true", // Mengkonversi dari string
         isArchived: isArchived === "true", // Mengkonversi dari string
