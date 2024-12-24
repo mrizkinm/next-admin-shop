@@ -10,7 +10,7 @@ export async function GET(req, {params}) {
 
     const product = await db.product.findUnique({
       where: {
-        id: params.productId
+        id: parseInt(params.productId)
       },
       include: {
         category: true
@@ -26,10 +26,11 @@ export async function GET(req, {params}) {
 const formSchema = z.object({
   name: z.string().min(1),
   price: z.coerce.number().min(1),
-  categoryId: z.string().min(1),
-  isFeatured: z.boolean().default(false).optional(),
-  isArchived: z.boolean().default(false).optional()
-})
+  categoryId: z.coerce.number().min(1),
+  isFeatured: z.string().optional(),
+  isArchived: z.string().optional(),
+  description: z.string().min(1),
+});
 
 export async function PATCH(req, {params}) {
   try {
@@ -37,28 +38,44 @@ export async function PATCH(req, {params}) {
       return new NextResponse.json({ error: "Harus ada product id" }, {status: 400})
     }
     
-    const { name, price, categoryId, isFeatured, isArchived } = await req.json();
+    const formData = await req.formData();
+    
+    // Ambil field data dan file
+    const name = formData.get('name');
+    const price = formData.get('price');
+    const categoryId = formData.get('categoryId');
+    const description = formData.get('description');
+    const isFeatured = formData.get('isFeatured');
+    const isArchived = formData.get('isArchived');
 
-    const result = formSchema.safeParse({ name, price, categoryId, isFeatured, isArchived });
+    const result = formSchema.safeParse({ name, categoryId, price, description, isFeatured, isArchived });
 
     if (!result.success) {
-      return NextResponse.json({ error: result.error.format().name?._errors[0] || result.error.format().price?._errors[0] || result.error.format().categoryId?._errors[0] || result.error.format().isFeatured?._errors[0] || result.error.format().isArchived?._errors[0] }, { status: 400 });
+      const errors = result.error.flatten().fieldErrors;
+
+      // Ubah format menjadi { fieldName: "Error message" }
+      const simplifiedErrors = Object.fromEntries(
+        Object.entries(errors).map(([key, value]) => [key, value?.[0] || 'Invalid value'])
+      );
+
+      return NextResponse.json({ errors: simplifiedErrors }, { status: 400 });
     }
 
-    const product = await db.product.updateMany({
+    await db.product.updateMany({
       where: {
-        id: params.productId
+        id: parseInt(params.productId)
       },
       data: {
         name,
-        price,
-        categoryId,
-        isFeatured,
-        isArchived
-      }
+        categoryId: parseInt(categoryId),
+        price: parseInt(price),
+        description,
+        isFeatured: isFeatured === "true", // Mengkonversi dari string
+        isArchived: isArchived === "true", // Mengkonversi dari string
+      },
     })
 
-    return NextResponse.json(product);
+    return NextResponse.json({ msg: "Success to update data" });
   } catch (error) {
     console.error('Error patch data', error);
     return new NextResponse.json({ error: "Internal server error" }, {status: 500})
