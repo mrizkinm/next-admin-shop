@@ -10,7 +10,7 @@ export async function GET(req, {params}) {
 
     const category = await db.category.findUnique({
       where: {
-        id: params.categoryId
+        id: parseInt(params.categoryId)
       },
       include: {
         products: true
@@ -38,19 +38,26 @@ export async function PATCH(req, {params}) {
     const result = formSchema.safeParse({ name });
 
     if (!result.success) {
-      return NextResponse.json({ error: result.error.format().name?._errors[0] }, { status: 400 });
+      const errors = result.error.flatten().fieldErrors;
+
+      // Ubah format menjadi { fieldName: "Error message" }
+      const simplifiedErrors = Object.fromEntries(
+        Object.entries(errors).map(([key, value]) => [key, value?.[0] || 'Invalid value'])
+      );
+
+      return NextResponse.json({ errors: simplifiedErrors }, { status: 400 });
     }
 
-    const category = await db.category.updateMany({
+    await db.category.updateMany({
       where: {
-        id: params.categoryId
+        id: parseInt(params.categoryId)
       },
       data: {
         name
       }
     })
 
-    return NextResponse.json(category);
+    return NextResponse.json({ msg: "Success to update data" });
   } catch (error) {
     console.error('Error patch data', error);
     return new NextResponse({ error: "Internal server error" }, {status: 500})
