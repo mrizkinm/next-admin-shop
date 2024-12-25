@@ -30,6 +30,7 @@ const formSchema = z.object({
   isFeatured: z.string().optional(),
   isArchived: z.string().optional(),
   description: z.string().min(1),
+  quantity: z.coerce.number().min(0),
 });
 
 export async function PATCH(req, {params}) {
@@ -47,8 +48,9 @@ export async function PATCH(req, {params}) {
     const description = formData.get('description');
     const isFeatured = formData.get('isFeatured');
     const isArchived = formData.get('isArchived');
+    const quantity = formData.get('quantity');
 
-    const result = formSchema.safeParse({ name, categoryId, price, description, isFeatured, isArchived });
+    const result = formSchema.safeParse({ name, categoryId, price, description, isFeatured, isArchived, quantity });
 
     if (!result.success) {
       const errors = result.error.flatten().fieldErrors;
@@ -69,6 +71,7 @@ export async function PATCH(req, {params}) {
         name,
         categoryId: parseInt(categoryId),
         price: parseInt(price),
+        quantity: parseInt(quantity),
         description,
         isFeatured: isFeatured === "true", // Mengkonversi dari string
         isArchived: isArchived === "true", // Mengkonversi dari string
