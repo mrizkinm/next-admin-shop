@@ -42,6 +42,7 @@ const formSchema = z.object({
   isFeatured: z.string().optional(),
   isArchived: z.string().optional(),
   description: z.string().min(1),
+  quantity: z.coerce.number().min(0),
 });
 
 export async function POST(req) {
@@ -55,13 +56,14 @@ export async function POST(req) {
     const description = formData.get('description');
     const isFeatured = formData.get('isFeatured');
     const isArchived = formData.get('isArchived');
+    const quantity = formData.get('quantity');
     
     const images = [];
     for (let i = 0; i < formData.getAll('images').length; i++) {
       images.push(formData.getAll('images')[i]);
     }
 
-    const result = formSchema.safeParse({ name, images, categoryId, price, description, isFeatured, isArchived });
+    const result = formSchema.safeParse({ name, images, categoryId, price, description, isFeatured, isArchived, quantity });
     
     if (!result.success) {
       const errors = result.error.flatten().fieldErrors;
@@ -79,6 +81,7 @@ export async function POST(req) {
         name,
         categoryId: parseInt(categoryId),
         price: parseInt(price),
+        quantity: parseInt(quantity),
         description,
         isFeatured: isFeatured === "true", // Mengkonversi dari string
         isArchived: isArchived === "true", // Mengkonversi dari string
