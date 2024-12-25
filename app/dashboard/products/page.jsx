@@ -9,6 +9,7 @@ import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import { DataTable } from "@/components/ui/data-table";
 import { columns } from "./components/column";
+import PageContainer from '@/components/page-container'
 
 const ProductsPage = () => {
   const [ data, setData] = useState([])
@@ -30,7 +31,7 @@ const ProductsPage = () => {
   }, [])
 
   return (
-    <div className="h-full p-4 md:px-6">
+    <PageContainer scrollable={true}>
       <div className="space-y-4">
         <div className="flex items-start justify-between">
           <Heading
@@ -48,7 +49,7 @@ const ProductsPage = () => {
         <Separator />
         <DataTable data={data} columns={columns} totalItems={totalItems} searchKey="name" />
       </div>
-    </div>
+    </PageContainer>
   )
 }
 
