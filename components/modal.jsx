@@ -13,12 +13,8 @@ const Modal = ({title, description, isOpen, onClose, children}) => {
     <Dialog open={isOpen} onOpenChange={onChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>
-            {title}
-          </DialogTitle>
-          <DialogDescription>
-            {description}
-          </DialogDescription>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
         <div>{children}</div>
       </DialogContent>
