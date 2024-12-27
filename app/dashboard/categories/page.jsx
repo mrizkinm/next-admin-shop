@@ -10,6 +10,7 @@ import React, { useEffect, useState } from 'react'
 import { DataTable } from "@/components/ui/data-table";
 import { columns } from "./components/column";
 import PageContainer from '@/components/page-container'
+import TableSkeleton from '@/components/table-skeleton'
 
 const CategoriesPage = () => {
   const [ data, setData] = useState([])
@@ -46,7 +47,11 @@ const CategoriesPage = () => {
           </Link>
         </div>
         <Separator />
-        <DataTable data={data} columns={columns} searchKey="name" />
+        {data.length > 0 ? (
+          <DataTable data={data} columns={columns} searchKey="name" />
+        ) : (
+          <TableSkeleton columnCount={3} rowCount={10} />
+        )}
       </div>
     </PageContainer>
   )
