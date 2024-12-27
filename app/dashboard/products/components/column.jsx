@@ -1,6 +1,5 @@
 "use client"
 
-import Image from "next/image"
 import { CellAction } from "./cell-action"
 import { format } from "date-fns"
 import { Check, X } from "lucide-react"
