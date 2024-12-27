@@ -95,7 +95,7 @@ const FileInput = ({ name }) => {
             {files.map((file, index) => (
               <li
                 key={file.name}
-                className="flex items-center justify-between bg-gray-50 p-2 rounded-md"
+                className="flex items-center justify-between bg-gray-50 dark:bg-black p-2 rounded-md"
               >
                 <div className="flex items-center">
                   {/* Pratinjau Gambar */}
@@ -107,7 +107,7 @@ const FileInput = ({ name }) => {
                     />
                   )}
                   {/* Nama File */}
-                  <span className="ml-4 text-sm text-gray-800 truncate max-w-xs">
+                  <span className="ml-4 text-sm text-secondary-foreground truncate max-w-xs">
                     {file.name}
                   </span>
                 </div>
