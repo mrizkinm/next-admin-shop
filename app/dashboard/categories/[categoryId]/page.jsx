@@ -9,20 +9,27 @@ const AddCategories = async ({params}) => {
   const { categoryId } = await params;
 
   let category;
+  let title = '';
+  let description = '';
   if (categoryId != 'add') {
     category = await db.category.findUnique({
       where: {
         id: parseInt(categoryId)
       }
     })
+    title = 'Edit Category';
+    description = 'Edit existing category';
+  } else {
+    title = 'Add Category';
+    description = 'Add new category';
   }
 
   return (
     <PageContainer scrollable={true}>
       <div className="space-y-4">
         <Heading
-          title="Add Categories"
-          description="Add new categories"
+          title={title}
+          description={description}
         />
         <Separator />
         <CategoryForm initialData={category} />
