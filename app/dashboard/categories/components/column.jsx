@@ -1,7 +1,19 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { CellAction } from "./cell-action"
 import { format } from "date-fns"
+import { ArrowUpDown } from "lucide-react"
+
+const SortableHeader = ({ column, title }) => (
+  <Button
+    variant="ghost"
+    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+  >
+    {title}
+    <ArrowUpDown />
+  </Button>
+);
 
 export const columns = [
   {
@@ -11,12 +23,12 @@ export const columns = [
   },
   {
     accessorKey: "createdAt",
-    header: "Date",
+    header: ({ column }) => <SortableHeader column={column} title="Date" />,
     cell: ({row}) => format(row.original.createdAt, 'dd MMM yyyy HH:mm')
   },
   {
     accessorKey: "name",
-    header: "Name",
+    header: ({ column }) => <SortableHeader column={column} title="Name" />,
   },
   {
     id: "actions",
