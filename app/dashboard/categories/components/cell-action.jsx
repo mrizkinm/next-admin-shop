@@ -32,6 +32,7 @@ export const CellAction = ({data}) => {
       console.log(error)
     } finally {
       setLoading(false)
+      setOpen(false)
     }
   }
 
@@ -63,7 +64,7 @@ export const CellAction = ({data}) => {
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() =>setOpen(true)}>
               <Trash className="mr-2 h-4 w-4" />
-              Hapus
+              Delete
             </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
