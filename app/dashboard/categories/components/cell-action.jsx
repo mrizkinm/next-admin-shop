@@ -4,7 +4,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Button } from "@/components/ui/button"
 import { Edit, MoreHorizontal, Trash } from "lucide-react"
 import toast from "react-hot-toast"
-import React, { useRouter } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { AlertModal } from "@/components/alert-modal"
 
