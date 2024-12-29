@@ -14,6 +14,7 @@ import TableSkeleton from '@/components/table-skeleton'
 
 const CategoriesPage = () => {
   const [ data, setData] = useState([])
+  const [ loading, setLoading ] = useState(true)
 
   useEffect(() => {
     const getData = async () => {
@@ -25,7 +26,9 @@ const CategoriesPage = () => {
       } catch (error) {
         console.error('Gagal mendapatkan akses token baru:', error.message);
         throw error;
-      }
+      } finally {
+        setLoading(false)
+      };
     };
     getData()
   }, [])
@@ -47,7 +50,7 @@ const CategoriesPage = () => {
           </Link>
         </div>
         <Separator />
-        {data.length > 0 ? (
+        {!loading ? (
           <DataTable data={data} columns={columns} searchKey="name" />
         ) : (
           <TableSkeleton columnCount={3} rowCount={10} />
