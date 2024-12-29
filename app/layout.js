@@ -2,6 +2,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { Toaster } from 'react-hot-toast';
+import NextTopLoader from "nextjs-toploader";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -25,7 +26,7 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased overflow-hidden`}
       >
-        
+        <NextTopLoader showSpinner={false} />
         <ThemeProvider attribute="class" defaultTheme="system">
           <Toaster />
           {children}
