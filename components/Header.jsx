@@ -3,6 +3,7 @@ import { SidebarTrigger } from './ui/sidebar';
 import { Separator } from './ui/separator';
 import ThemeButton from './theme-button';
 import UserNav from './user-nav';
+import Breadcrumbs from './breadcrumbs';
 
 const Header = () => {
   return (
@@ -10,9 +11,7 @@ const Header = () => {
       <div className="flex items-center gap-2 px-4">
         <SidebarTrigger />
         <Separator orientation="vertical" className="mr-2 h-4" />
-        <div>
-          Dashboard
-        </div>
+        <Breadcrumbs />
       </div>
 
       <div className="flex items-center gap-2 px-4">
