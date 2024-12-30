@@ -32,6 +32,7 @@ export const CellAction = ({data}) => {
       console.log(error)
     } finally {
       setLoading(false)
+      setOpen(false)
     }
   }
 
