@@ -1,8 +1,19 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { CellAction } from "./cell-action"
 import { format } from "date-fns"
-import { Check, X } from "lucide-react"
+import { ArrowUpDown, Check, X } from "lucide-react"
+
+const SortableHeader = ({ column, title }) => (
+  <Button
+    variant="ghost"
+    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+  >
+    {title}
+    <ArrowUpDown />
+  </Button>
+);
 
 export const columns = [
   {
@@ -17,32 +28,41 @@ export const columns = [
   },
   {
     accessorKey: "createdAt",
-    header: "Date",
+    header: ({ column }) => <SortableHeader column={column} title="Date" />,
     cell: ({row}) => format(row.original.createdAt, 'dd MMM yyyy HH:mm')
   },
   {
     accessorKey: "name",
-    header: "Name",
+    header: ({ column }) => <SortableHeader column={column} title="Name" />,
   },
   {
     accessorKey: "price",
-    header: "Price",
+    header: ({ column }) => <SortableHeader column={column} title="Price" />,
     cell: ({row}) => 'Rp '+new Intl.NumberFormat('en-US').format(row.original.price)
   },
   {
-    accessorKey: "category",
-    header: "Category",
+    accessorKey: "categoryId",
+    header: ({ column }) => <SortableHeader column={column} title="Category" />,
     cell: ({row}) => row.original.category.name
+  },
+  {
+    accessorKey: "quantity",
+    header: ({ column }) => <SortableHeader column={column} title="Quantity" />,
+    cell: ({row}) => row.original.quantity
   },
   {
     accessorKey: "isFeatured",
     header: "Featured",
-    cell: ({row}) => row.original.isFeatured ? <div className="rounded-full w-6 h-6 bg-green-600"><Check className="size-6 text-white" /></div> : <div className="rounded-full w-6 h-6 bg-destructive"><X className="size-6 text-white" /></div>
+    cell: ({row}) => row.original.isFeatured
+    ? <span className="inline-flex items-center justify-center w-6 h-6 bg-green-500 text-white rounded-full"><Check className="w-5 h-5" /></span>
+    : <span className="inline-flex items-center justify-center w-6 h-6 bg-red-500 text-white rounded-full"><X className="w-5 h-5" /></span>
   },
   {
     accessorKey: "isArchived",
     header: "Archived",
-    cell: ({row}) => row.original.isArchived ? <div className="rounded-full w-6 h-6 bg-green-600"><Check className="size-6 text-white" /></div> : <div className="rounded-full w-6 h-6 bg-destructive"><X className="size-6 text-white" /></div>
+    cell: ({row}) => row.original.isArchived
+    ? <span className="inline-flex items-center justify-center w-6 h-6 bg-green-500 text-white rounded-full"><Check className="w-5 h-5" /></span>
+    : <span className="inline-flex items-center justify-center w-6 h-6 bg-red-500 text-white rounded-full"><X className="w-5 h-5" /></span>
   },
   {
     id: "actions",
