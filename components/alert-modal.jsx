@@ -30,8 +30,8 @@ export const AlertModal = ({
       onClose={onClose}
     >
       <div className="pt-6 space-x-2 flex items-center justify-end w-full">
-        <Button disabled={loading} variant="outline" onClick={onClose}>Cancel</Button>
-        <Button disabled={loading} variant="destructive" onClick={onConfirm}>Delete</Button>
+        <Button disabled={loading} variant="outline" onClick={onClose}>No</Button>
+        <Button disabled={loading} variant="destructive" onClick={onConfirm}>Yes</Button>
       </div>
     </Modal>
   )
