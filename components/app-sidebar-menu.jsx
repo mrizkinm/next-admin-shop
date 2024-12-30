@@ -35,13 +35,15 @@ import {
   BadgeCheck,
   Bell,
   Boxes,
-  Captions,
   ChevronRight,
   ChevronsUpDown,
   Cog,
   Edit,
   User,
   Home,
+  ShoppingBasket,
+  Users,
+  List,
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -71,7 +73,21 @@ const navItems = [
   {
     title: 'Categories',
     url: '/dashboard/categories',
-    icon: <Captions />,
+    icon: <List />,
+    isActive: false,
+    items: []
+  },
+  {
+    title: 'Orders',
+    url: '/dashboard/orders',
+    icon: <ShoppingBasket />,
+    isActive: false,
+    items: []
+  },
+  {
+    title: 'Customers',
+    url: '/dashboard/customers',
+    icon: <Users />,
     isActive: false,
     items: []
   },
@@ -114,7 +130,7 @@ const AppSidebarMenu = () => {
       </SidebarHeader>
       <SidebarContent className="overflow-x-hidden">
         <SidebarGroup>
-          <SidebarGroupLabel>Overview</SidebarGroupLabel>
+          <SidebarGroupLabel>Menu</SidebarGroupLabel>
           <SidebarMenu>
             {navItems.map((item) => {
               return item?.items && item?.items?.length > 0 ? (
