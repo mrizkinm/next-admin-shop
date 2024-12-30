@@ -10,20 +10,27 @@ const AddProducts = async ({params}) => {
   const { productId } = await params;
   
   let product;
+  let title = '';
+  let description = '';
   if (productId != 'add') {
     product = await db.product.findUnique({
       where: {
         id: parseInt(productId)
       }
     })
+    title = 'Edit Product';
+    description = 'Edit existing product';
+  } else {
+    title = 'Add Product';
+    description = 'Add new product';
   }
 
   return (
     <PageContainer scrollable={true}>
       <div className="space-y-4">
         <Heading
-          title="Add Products"
-          description="Add new products"
+          title={title}
+          description={description}
         />
         <Separator />
         <ProductForm categories={category} initialData={product} />
