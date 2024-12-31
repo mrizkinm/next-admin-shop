@@ -15,7 +15,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { UserDataContext } from '@/app/dashboard/user-data-context';
 import { useRouter } from 'next/navigation';
-import { Cog, LogOut, User, UserCircle } from 'lucide-react';
+import { Cog, LogOut, User } from 'lucide-react';
+import Link from 'next/link';
 
 const UserNav = () => {
   const router = useRouter();
@@ -54,11 +55,7 @@ const UserNav = () => {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative border h-10 w-10 rounded-full">
           <Avatar>
-            <AvatarImage
-              src="/img/logo.png"
-              alt={user?.name}
-              className="p-1"
-            />
+            <AvatarImage />
             <AvatarFallback>{user?.name[0]}</AvatarFallback>
           </Avatar>
         </Button>
@@ -76,14 +73,18 @@ const UserNav = () => {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
-            Profile
-            <DropdownMenuShortcut><User /></DropdownMenuShortcut>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            Settings
-          <DropdownMenuShortcut><Cog /></DropdownMenuShortcut>
-          </DropdownMenuItem>
+          <Link href={`/dashboard/profile`}>
+            <DropdownMenuItem className="cursor-pointer">
+              Profile
+              <DropdownMenuShortcut><User /></DropdownMenuShortcut>
+            </DropdownMenuItem>
+          </Link>
+          <Link href={`/dashboard/settings`}>
+            <DropdownMenuItem className="cursor-pointer">
+              Settings
+            <DropdownMenuShortcut><Cog /></DropdownMenuShortcut>
+            </DropdownMenuItem>
+          </Link>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="cursor-pointer" onClick={() => onLogout()}>
