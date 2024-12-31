@@ -32,8 +32,6 @@ import {
   SidebarRail
 } from '@/components/ui/sidebar';
 import {
-  BadgeCheck,
-  Bell,
   Boxes,
   ChevronRight,
   ChevronsUpDown,
@@ -41,19 +39,14 @@ import {
   Edit,
   User,
   Home,
-  ShoppingBasket,
   Users,
   List,
+  ShoppingBag,
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import React, { useContext } from 'react';
-
-export const company = {
-  name: 'Gundam Market',
-  plan: 'Welcome admin'
-};
+import React, { useContext, useEffect, useState } from 'react';
 
 const navItems = [
   {
@@ -80,7 +73,7 @@ const navItems = [
   {
     title: 'Orders',
     url: '/dashboard/orders',
-    icon: <ShoppingBasket />,
+    icon: <ShoppingBag />,
     isActive: false,
     items: []
   },
@@ -115,6 +108,26 @@ const AppSidebarMenu = () => {
   const pathname = usePathname();
   const { user } = useContext(UserDataContext);
 
+  const [ shop, setShop] = useState({})
+  const [ loading, setLoading ] = useState(true)
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const response = await fetch("/api/data/shop", { method: "GET" });
+  
+        const responseData = await response.json();
+        setShop(responseData[0]);
+      } catch (error) {
+        console.error('Gagal mendapatkan akses token baru:', error.message);
+        throw error;
+      } finally {
+        setLoading(false)
+      };
+    };
+    getData()
+  }, [])
+
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
@@ -123,8 +136,8 @@ const AppSidebarMenu = () => {
             <Image src="/img/gundam.png" width={30} height={30} alt="Image" />
           </div>
           <div className="grid flex-1 text-left text-sm leading-tight">
-            <span className="truncate font-semibold">{company.name}</span>
-            <span className="truncate text-xs">{company.plan}</span>
+            <span className="truncate font-semibold">{shop?.name}</span>
+            <span className="truncate text-xs">Welcome admin</span>
           </div>
         </div>
       </SidebarHeader>
@@ -197,10 +210,7 @@ const AppSidebarMenu = () => {
                   className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                 >
                   <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage
-                      src="/img/logo.png"
-                      alt= {user?.name}
-                    />
+                    <AvatarImage />
                     <AvatarFallback className="rounded-lg">
                       {user?.name[0]}
                     </AvatarFallback>
@@ -225,10 +235,7 @@ const AppSidebarMenu = () => {
                 <DropdownMenuLabel className="p-0 font-normal">
                   <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                     <Avatar className="h-8 w-8 rounded-lg">
-                      <AvatarImage
-                        src="/img/logo.png"
-                        alt= {user?.name}
-                      />
+                      <AvatarImage />
                       <AvatarFallback className="rounded-lg">
                         {user?.name[0]}
                       </AvatarFallback>
@@ -246,14 +253,18 @@ const AppSidebarMenu = () => {
                 <DropdownMenuSeparator />
 
                 <DropdownMenuGroup>
-                  <DropdownMenuItem>
-                    <BadgeCheck />
-                    Account
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Bell />
-                    Notifications
-                  </DropdownMenuItem>
+                  <Link href={`/dashboard/profile`}>
+                    <DropdownMenuItem className="cursor-pointer">
+                      <User />
+                      Profile
+                    </DropdownMenuItem>
+                  </Link>
+                  <Link href={`/dashboard/settings`}>
+                    <DropdownMenuItem className="cursor-pointer">
+                      <Cog />
+                      Settings
+                    </DropdownMenuItem>
+                  </Link>
                 </DropdownMenuGroup>
               </DropdownMenuContent>
             </DropdownMenu>
