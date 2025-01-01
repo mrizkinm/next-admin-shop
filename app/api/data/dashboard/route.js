@@ -12,7 +12,7 @@ export async function GET(req) {
     // Fetch recent orders
     const recentOrders = await db.order.findMany({
       orderBy: { createdAt: "desc" },
-      take: 10, // Limit to 10 latest orders
+      where: { status: "Pending" },
       include: {
         items: {
           include: {
@@ -35,6 +35,6 @@ export async function GET(req) {
     return NextResponse.json(summary)
   } catch (error) {
     console.error("Error get data", error)
-    return NextResponse.json({ error: "Internal server error" }, {status: 500})
+    return NextResponse.json({ errors: "Internal server error" }, {status: 500})
   }
 }
