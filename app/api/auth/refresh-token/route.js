@@ -4,7 +4,7 @@ import db from "@/lib/db";
 
 export async function GET(req) {
   const refreshToken = req.cookies.get('refreshToken')?.value;
-  if (!refreshToken) return NextResponse.json({ message: 'Token tidak ditemukan' }, { status: 401 });
+  if (!refreshToken) return NextResponse.json({ msg: 'Token tidak ditemukan' }, { status: 401 });
   
   try {
     // Verifikasi refresh token
@@ -12,7 +12,7 @@ export async function GET(req) {
       refreshToken, 
       new TextEncoder().encode(process.env.REFRESH_TOKEN_SECRET)
     );
-    if (!payload) return NextResponse.json({ message: 'Token tidak valid' }, { status: 401 });
+    if (!payload) return NextResponse.json({ msg: 'Token tidak valid' }, { status: 401 });
 
     // Cocokkan token dengan token di database
     const user = await db.user.findUnique({
@@ -20,7 +20,7 @@ export async function GET(req) {
     });
 
     if (!user || user.token !== refreshToken) {
-      return NextResponse.json({ message: 'Token tidak cocok' }, { status: 401 });
+      return NextResponse.json({ msg: 'Token tidak cocok' }, { status: 401 });
     }
 
     // Buat access token baru
@@ -40,6 +40,6 @@ export async function GET(req) {
     return response;
   } catch (error) {
     console.error('Refresh Token error:', error);
-    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json({ msg: 'Internal Server Error' }, { status: 500 });
   }
 }
