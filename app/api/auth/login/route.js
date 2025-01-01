@@ -4,7 +4,7 @@ import db from "@/lib/db";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-const loginSchema = z.object({
+const formSchema = z.object({
   email: z.string().email("Email tidak valid").min(1, "Email tidak boleh kosong"),
   password: z.string().min(6, "Password harus memiliki minimal 6 karakter"),
 });
@@ -13,22 +13,29 @@ export async function POST(req) {
   try {
     const { email, password } = await req.json();
 
-    const result = loginSchema.safeParse({ email, password });
+    const result = formSchema.safeParse({ email, password });
 
     if (!result.success) {
-      return NextResponse.json({ error: result.error.format().email?._errors[0] || result.error.format().password?._errors[0] }, { status: 400 });
+      const errors = result.error.flatten().fieldErrors;
+
+      // Ubah format menjadi { fieldName: "Error message" }
+      const simplifiedErrors = Object.fromEntries(
+        Object.entries(errors).map(([key, value]) => [key, value?.[0] || 'Invalid value'])
+      );
+
+      return NextResponse.json({ errors: simplifiedErrors }, { status: 400 });
     }
     
     // Cari user berdasarkan email
     const user = await db.user.findUnique({ where: { email } });
     if (!user) {
-      return NextResponse.json({ error: "Email atau password salah" }, { status: 401 });
+      return NextResponse.json({ errors: "Email atau password salah" }, { status: 401 });
     }
 
     // Verifikasi password
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) {
-      return NextResponse.json({ error: "Email atau password salah" }, { status: 401 });
+      return NextResponse.json({ errors: "Email atau password salah" }, { status: 401 });
     }
 
     // Buat access token dan refresh token
@@ -48,7 +55,7 @@ export async function POST(req) {
       data: { token: refreshToken },
     });
     // Tambahkan refresh token ke dalam cookie
-    const response = NextResponse.json({ message: 'Login berhasil', accessToken });
+    const response = NextResponse.json({ msg: 'Login berhasil', accessToken });
     response.cookies.set('accessToken', accessToken, {
       httpOnly: false,  // Untuk keamanan, hanya bisa diakses oleh server
       secure: process.env.NODE_ENV === 'production',  // Set secure di production
@@ -63,6 +70,6 @@ export async function POST(req) {
     });
     return response;
   } catch (error) {
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ errors: "Internal server error" }, { status: 500 });
   }
 }
