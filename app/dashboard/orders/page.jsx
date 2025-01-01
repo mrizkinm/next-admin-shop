@@ -12,27 +12,33 @@ const OrdersPage = () => {
   const [ data, setData] = useState([])
   const [ loading, setLoading ] = useState(true)
 
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const response = await fetch("/api/data/orders", { method: "GET" });
-  
-        const responseData = await response.json();
-        setData(responseData);
-      } catch (error) {
-        console.error('Gagal mendapatkan akses token baru:', error.message);
-        throw error;
-      } finally {
-        setLoading(false)
-      };
+  const getData = async () => {
+    try {
+      const response = await fetch("/api/data/orders", { method: "GET" });
+
+      const responseData = await response.json();
+      setData(responseData);
+    } catch (error) {
+      console.error('Gagal mendapatkan akses token baru:', error.message);
+      throw error;
+    } finally {
+      setLoading(false)
     };
+  };
+
+  useEffect(() => {
     getData()
   }, [])
 
-  const updateData = (id, updatedRow) => {
-    setData((prevData) =>
-      prevData.map((item) => (item.id === id ? { ...item, ...updatedRow } : item))
-    );
+  // const updateData = (id, updatedRow) => {
+  //   setData((prevData) =>
+  //     prevData.map((item) => (item.id === id ? { ...item, ...updatedRow } : item))
+  //   );
+  // };
+
+  const updateData = async () => {
+    // setLoading(true);
+    await getData();
   };
 
   return (
