@@ -5,6 +5,7 @@ import { z } from "zod";
 export async function GET(req) {
   try {
     const order = await db.order.findMany({
+      orderBy: { status: "asc" },
       include: {
         items: true,
         customer: true
