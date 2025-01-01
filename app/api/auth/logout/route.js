@@ -5,14 +5,14 @@ export async function POST(req) {
   const { id } = await req.json();
 
   if (!id) {
-    return NextResponse.json({ message: 'User ID is required' }, { status: 400 });
+    return NextResponse.json({ errors: 'User ID is required' }, { status: 400 });
   }
   await db.user.update({
     where: { id },
     data: { token: null },
   });
 
-  const response = NextResponse.json({ message: 'Logout berhasil' });
+  const response = NextResponse.json({ msg: 'Logout berhasil' });
   response.cookies.delete('refreshToken', { path: '/' });
   response.cookies.delete('accessToken', { path: '/' });
 
