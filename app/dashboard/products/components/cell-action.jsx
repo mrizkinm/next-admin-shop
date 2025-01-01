@@ -7,6 +7,7 @@ import toast from "react-hot-toast"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { AlertModal } from "@/components/alert-modal"
+import Link from "next/link"
 
 export const CellAction = ({data}) => {
   const [loading, setLoading] = useState(false);
@@ -58,11 +59,13 @@ export const CellAction = ({data}) => {
               Action
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => router.push(`/dashboard/products/${data.id}`)}>
-              <Edit className="mr-2 h-4 w-4" />
-              Edit
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() =>setOpen(true)}>
+            <Link href={`/dashboard/products/${data.id}`}>
+              <DropdownMenuItem className="cursor-pointer">
+                <Edit className="mr-2 h-4 w-4" />
+                Edit
+              </DropdownMenuItem>
+            </Link>
+            <DropdownMenuItem onClick={() =>setOpen(true)} className="cursor-pointer">
               <Trash className="mr-2 h-4 w-4" />
               Delete
             </DropdownMenuItem>
