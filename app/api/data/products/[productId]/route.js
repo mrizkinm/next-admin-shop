@@ -5,7 +5,7 @@ import { z } from "zod";
 export async function GET(req, {params}) {
   try {
     if (!params.productId) {
-      return new NextResponse.json({ error: "Harus ada product id" }, {status: 400})
+      return new NextResponse.json({ errors: "Harus ada product id" }, {status: 400})
     }
 
     const product = await db.product.findUnique({
@@ -19,7 +19,7 @@ export async function GET(req, {params}) {
     return NextResponse.json(product);
   } catch (error) {
     console.log('ERROR product GET', error);
-    return NextResponse.json({ error: "Internal server error" }, {status: 500})
+    return NextResponse.json({ errors: "Internal server error" }, {status: 500})
   }
 }
 
@@ -36,7 +36,7 @@ const formSchema = z.object({
 export async function PATCH(req, {params}) {
   try {
     if (!params.productId) {
-      return new NextResponse.json({ error: "Harus ada product id" }, {status: 400})
+      return new NextResponse.json({ errors: "Harus ada product id" }, {status: 400})
     }
     
     const formData = await req.formData();
@@ -81,14 +81,14 @@ export async function PATCH(req, {params}) {
     return NextResponse.json({ msg: "Success to update data" });
   } catch (error) {
     console.error('Error patch data', error);
-    return new NextResponse.json({ error: "Internal server error" }, {status: 500})
+    return new NextResponse.json({ errors: "Internal server error" }, {status: 500})
   }
 }
 
 export async function DELETE(req, {params}) {
   try {
     if (!params.productId) {
-      return new NextResponse.json({ error: "Harus ada product id" }, {status: 400})
+      return new NextResponse.json({ errors: "Harus ada product id" }, {status: 400})
     }
 
     await db.image.deleteMany({
@@ -105,6 +105,6 @@ export async function DELETE(req, {params}) {
     return NextResponse.json({ msg: "Success to delete data" });
   } catch (error) {
     console.log('Error delete data', error);
-    return NextResponse.json({ error: "Internal server error" }, {status: 500})
+    return NextResponse.json({ errors: "Internal server error" }, {status: 500})
   }
 }
