@@ -4,9 +4,9 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Button } from "@/components/ui/button"
 import { Check, Eye, MoreHorizontal, X } from "lucide-react"
 import toast from "react-hot-toast"
-import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { AlertModal } from "@/components/alert-modal"
+import Link from "next/link"
 
 export const CellAction = ({data, updateData}) => {
   const [loading, setLoading] = useState(false);
@@ -14,7 +14,6 @@ export const CellAction = ({data, updateData}) => {
   const [action, setAction] = useState('');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const router = useRouter()
 
   const handleAction = async (actionType) => {
     try {
@@ -78,17 +77,19 @@ export const CellAction = ({data, updateData}) => {
               Action
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => router.push(`/dashboard/orders/${data.id}`)}>
-              <Eye className="mr-2 h-4 w-4" />
-              Detail
-            </DropdownMenuItem>
+            <Link href={`/dashboard/orders/${data.id}`}>
+              <DropdownMenuItem className="cursor-pointer">
+                <Eye className="mr-2 h-4 w-4" />
+                Detail
+              </DropdownMenuItem>
+            </Link>
             {data.status === "Pending" && (
               <>
-                <DropdownMenuItem onClick={() =>onAction('process')}>
+                <DropdownMenuItem onClick={() =>onAction('process')} className="cursor-pointer">
                   <Check className="mr-2 h-4 w-4" />
                   Process
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() =>onAction('cancel')}>
+                <DropdownMenuItem onClick={() =>onAction('cancel')} className="cursor-pointer">
                   <X className="mr-2 h-4 w-4" />
                   Cancel
                 </DropdownMenuItem>
