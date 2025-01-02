@@ -240,7 +240,7 @@ const ProductForm = ({categories, initialData}) => {
                     Archived
                   </FormLabel>
                   <FormDescription>
-                    Product ini akan diarsipkan
+                    This product will be archived
                   </FormDescription>
                 </div>
                </FormItem>
