@@ -159,7 +159,7 @@ const ProductForm = ({categories, initialData}) => {
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Pilih Kategori"/>
+                          <SelectValue placeholder="Select Category"/>
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
