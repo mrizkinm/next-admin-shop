@@ -10,14 +10,16 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod"
 import Image from "next/image";
 import toast from "react-hot-toast";
-
-const formSchema = z.object({
-  email: z.string().email("Email tidak valid").min(1, "Email tidak boleh kosong"),
-  password: z.string().min(6, "Password harus memiliki minimal 6 karakter"),
-});
+import { useErrorHandler } from "@/hooks/use-error-handler";
 
 const Login = () => {
+  const formSchema = z.object({
+    email: z.string().email("Email tidak valid").min(1, "Email tidak boleh kosong"),
+    password: z.string().min(6, "Password harus memiliki minimal 6 karakter"),
+  });
+
   const [loading, setLoading] = useState(false);
+  const { handleError } = useErrorHandler();
   const router = useRouter();
 
   const form = useForm({
@@ -41,15 +43,14 @@ const Login = () => {
         },
       });
 
-      const responseData = await response.json();
-
       if (response.ok) {
         toast.success('Login sukses');
         setTimeout(() => {
           router.push("/dashboard");
         }, 1000);
       } else {
-        toast.error(responseData.error);
+        const { errors } = await response.json();
+        handleError(errors);
       }
     } catch (error) {
       console.log(error)
@@ -63,7 +64,7 @@ const Login = () => {
       <div className="w-full max-w-md p-8 space-y-4 bg-white dark:bg-slate-950 shadow-lg rounded-lg mx-5">
         <div className="flex flex-col space-y-2 items-center">
           <Image src="/img/gundam.png" width={100} height={100} alt="Logo" />
-          <h1 className="text-2xl font-semibold tracking-tight">Gundam Shop</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">Shop</h1>
           <p className="text-sm text-muted-foreground">Enter your email and password</p>
         </div>
         <Form {...form}>
