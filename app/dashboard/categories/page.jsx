@@ -16,20 +16,21 @@ const CategoriesPage = () => {
   const [ data, setData] = useState([])
   const [ loading, setLoading ] = useState(true)
 
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const response = await fetch("/api/data/categories", { method: "GET" });
-  
-        const responseData = await response.json();
-        setData(responseData);
-      } catch (error) {
-        console.error('Gagal mendapatkan akses token baru:', error.message);
-        throw error;
-      } finally {
-        setLoading(false)
-      };
+  const getData = async () => {
+    try {
+      const response = await fetch("/api/data/categories", { method: "GET" });
+
+      const responseData = await response.json();
+      setData(responseData);
+    } catch (error) {
+      console.error('Gagal mendapatkan akses token baru:', error.message);
+      throw error;
+    } finally {
+      setLoading(false)
     };
+  };
+  
+  useEffect(() => {
     getData()
   }, [])
 
