@@ -10,6 +10,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Textarea } from "@/components/ui/textarea"
+import { useErrorHandler } from "@/hooks/use-error-handler";
 
 const CustomerForm = ({initialData}) => {
   const formSchema = z.object({
@@ -22,6 +23,7 @@ const CustomerForm = ({initialData}) => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const params = useParams();
+  const { handleError } = useErrorHandler();
   
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -63,9 +65,7 @@ const CustomerForm = ({initialData}) => {
       } else {
         const { errors } = await response.json();
         // Menampilkan error toast untuk setiap field yang gagal
-        Object.values(errors).forEach((errorMessage) => {
-          toast.error(errorMessage); // Menampilkan toast error
-        });
+        handleError(errors);
       }
     } catch (error) {
       console.log(error)

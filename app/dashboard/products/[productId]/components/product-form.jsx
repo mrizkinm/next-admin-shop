@@ -19,6 +19,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox"
 import { Textarea } from "@/components/ui/textarea"
 import FileInput from "@/components/file-input";
+import { useErrorHandler } from "@/hooks/use-error-handler";
 
 const ProductForm = ({categories, initialData}) => {
   const formSchema = z.object({
@@ -41,6 +42,7 @@ const ProductForm = ({categories, initialData}) => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const params = useParams();
+  const { handleError } = useErrorHandler();
   
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -93,9 +95,7 @@ const ProductForm = ({categories, initialData}) => {
       } else {
         const { errors } = await response.json();
         // Menampilkan error toast untuk setiap field yang gagal
-        Object.values(errors).forEach((errorMessage) => {
-          toast.error(errorMessage); // Menampilkan toast error
-        });
+        handleError(errors);
       }
     } catch (error) {
       console.log(error)
