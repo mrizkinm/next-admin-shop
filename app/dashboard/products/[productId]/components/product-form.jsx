@@ -218,7 +218,7 @@ const ProductForm = ({categories, initialData}) => {
                     Featured
                   </FormLabel>
                   <FormDescription>
-                    Product ini akan muncul di halaman awal
+                    This product will appear on the home page
                   </FormDescription>
                 </div>
                </FormItem>
