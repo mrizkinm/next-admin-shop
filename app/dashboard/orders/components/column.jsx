@@ -42,7 +42,7 @@ export const columns = (updateData) => [
   },
   {
     accessorKey: "status",
-    header: "Status",
+    header: ({ column }) => <SortableHeader column={column} title="Status" />,
     cell: ({ row }) => {
       const status = row.original.status;
       const statusColors = {
