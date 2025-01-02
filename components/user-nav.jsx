@@ -56,7 +56,7 @@ const UserNav = () => {
         <Button variant="ghost" className="relative border h-10 w-10 rounded-full">
           <Avatar>
             <AvatarImage />
-            <AvatarFallback>{user?.name[0]}</AvatarFallback>
+            <AvatarFallback>{user?.name.split(' ').map(word => word[0]).join('').toUpperCase()}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
