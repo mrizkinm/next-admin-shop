@@ -25,20 +25,20 @@ const Dashboard = () => {
     Canceled: 'bg-red-500 text-white hover:bg-red-600',
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("/api/data/dashboard");
-        const responseData = await response.json();
-        setData(responseData);
-      } catch (error) {
-        console.error("Failed to fetch dashboard data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const getData = async () => {
+    try {
+      const response = await fetch("/api/data/dashboard");
+      const responseData = await response.json();
+      setData(responseData);
+    } catch (error) {
+      console.error("Failed to fetch dashboard data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchData();
+  useEffect(() => {
+    getData();
   }, []);
 
   return (
