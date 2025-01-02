@@ -111,20 +111,21 @@ const AppSidebarMenu = () => {
   const [ shop, setShop] = useState({})
   const [ loading, setLoading ] = useState(true)
 
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const response = await fetch("/api/data/shop", { method: "GET" });
-  
-        const responseData = await response.json();
-        setShop(responseData[0]);
-      } catch (error) {
-        console.error('Gagal mendapatkan akses token baru:', error.message);
-        throw error;
-      } finally {
-        setLoading(false)
-      };
+  const getData = async () => {
+    try {
+      const response = await fetch("/api/data/shop", { method: "GET" });
+
+      const responseData = await response.json();
+      setShop(responseData[0]);
+    } catch (error) {
+      console.error('Gagal mendapatkan akses token baru:', error.message);
+      throw error;
+    } finally {
+      setLoading(false)
     };
+  };
+
+  useEffect(() => {
     getData()
   }, [])
 
@@ -136,7 +137,10 @@ const AppSidebarMenu = () => {
             <Image src="/img/gundam.png" width={30} height={30} alt="Image" />
           </div>
           <div className="grid flex-1 text-left text-sm leading-tight">
-            <span className="truncate font-semibold">{shop?.name}</span>
+            {loading
+              ? <span className="truncate font-semibold">Loading...</span>
+              : <span className="truncate font-semibold">{shop?.name}</span>
+            }
             <span className="truncate text-xs">Welcome admin</span>
           </div>
         </div>
@@ -212,7 +216,7 @@ const AppSidebarMenu = () => {
                   <Avatar className="h-8 w-8 rounded-lg">
                     <AvatarImage />
                     <AvatarFallback className="rounded-lg">
-                      {user?.name[0]}
+                      {user?.name.split(' ').map(word => word[0]).join('').toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
@@ -237,7 +241,7 @@ const AppSidebarMenu = () => {
                     <Avatar className="h-8 w-8 rounded-lg">
                       <AvatarImage />
                       <AvatarFallback className="rounded-lg">
-                        {user?.name[0]}
+                        {user?.name.split(' ').map(word => word[0]).join('').toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
