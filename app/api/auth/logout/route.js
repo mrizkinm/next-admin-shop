@@ -13,8 +13,8 @@ export async function POST(req) {
   });
 
   const response = NextResponse.json({ msg: 'Logout berhasil' });
-  response.cookies.delete('refreshToken', { path: '/' });
-  response.cookies.delete('accessToken', { path: '/' });
+  response.cookies.delete('refreshToken');
+  response.cookies.delete('accessToken');
 
   return response;
 }
