@@ -6,12 +6,6 @@ import path from "path";
 
 const uploadFolder = path.join(process.cwd(), "public/img/products");
 
-export const config = {
-  api: {
-    bodyParser: false, // Disable body parser so formidable can handle the request
-  },
-};
-
 export async function GET(req) {
   try {
     const product = await db.product.findMany({

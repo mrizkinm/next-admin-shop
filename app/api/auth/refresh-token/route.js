@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server';
 import { SignJWT, jwtVerify } from 'jose';
 import db from "@/lib/db";
+import { cookies } from 'next/headers';
 
 export async function GET(req) {
-  const refreshToken = req.cookies.get('refreshToken')?.value;
+  const cookieStore = await cookies();
+  const refreshToken = cookieStore.get('refreshToken')?.value;
   if (!refreshToken) return NextResponse.json({ msg: 'Token tidak ditemukan' }, { status: 401 });
   
   try {

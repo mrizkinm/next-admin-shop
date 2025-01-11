@@ -14,16 +14,20 @@ export async function GET(req) {
 }
 
 const formSchema = z.object({
-  name: z.string().min(1),
-  phone: z.string().min(1),
-  address: z.string().min(1)
+  name: z.string()
+    .min(3, { message: 'Nama minimal 3 karakter' })
+    .max(50, { message: 'Nama maksimal 50 karakter' }),
+  address: z.string().min(1),
+  phone: z.string().max(15),
+  email: z.string().min(1).email(),
+  description: z.string().min(1)
 });
 
 export async function PATCH(req) {
   try {
-    const { name, phone, address } = await req.json();
+    const { name, phone, address, email, description } = await req.json();
 
-    const result = formSchema.safeParse({ name, phone, address });
+    const result = formSchema.safeParse({ name, phone, address, email, description });
      
     if (!result.success) {
       const errors = result.error.flatten().fieldErrors;
@@ -43,7 +47,9 @@ export async function PATCH(req) {
       data: {
         name,
         phone,
-        address
+        address,
+        email,
+        description
       }
     })
 
