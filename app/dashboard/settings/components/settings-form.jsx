@@ -17,10 +17,10 @@ const SettingsForm = ({initialData}) => {
     name: z.string()
       .min(3, { message: 'Nama minimal 3 karakter' })
       .max(50, { message: 'Nama maksimal 50 karakter' }),
-    address: z.string()
-      .min(1),
-    phone: z.string()
-      .max(15)
+    address: z.string().min(1),
+    phone: z.string().max(15),
+    email: z.string().min(1).email(),
+    description: z.string().min(1)
   });
 
   const [ loading, setLoading ] = useState(false)
@@ -32,7 +32,9 @@ const SettingsForm = ({initialData}) => {
     defaultValues: initialData || {
       name: "",
       address: "",
-      phone: ""
+      phone: "",
+      email: "",
+      description: ""
     }
   });
 
@@ -67,19 +69,49 @@ const SettingsForm = ({initialData}) => {
       <CardContent className="pt-4">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input type="text" placeholder="Enter name" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Name</FormLabel>
+                    <FormControl>
+                      <Input type="text" placeholder="Enter name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input type="email" placeholder="Enter Email" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Phone</FormLabel>
+                    <FormControl>
+                      <Input type="text" placeholder="Enter phone" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <FormField
               control={form.control}
@@ -97,12 +129,12 @@ const SettingsForm = ({initialData}) => {
 
             <FormField
               control={form.control}
-              name="phone"
+              name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Phone</FormLabel>
+                  <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Input type="text" placeholder="Enter phone" {...field} />
+                    <Textarea placeholder="Enter description" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
