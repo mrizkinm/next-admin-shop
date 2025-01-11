@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useEffect, useState} from 'react'
-import { useUserData } from '../context/user-data-context';
+import { useUserData } from '../../context/user-data-context';
 import {
   Card,
   CardContent,

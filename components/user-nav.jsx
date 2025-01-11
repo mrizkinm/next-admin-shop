@@ -13,7 +13,7 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { useUserData } from '@/app/context/user-data-context';
+import { useUserData } from '@/context/user-data-context';
 import { useRouter } from 'next/navigation';
 import { Cog, LogOut, User } from 'lucide-react';
 import Link from 'next/link';

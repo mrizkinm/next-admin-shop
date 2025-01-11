@@ -1,6 +1,6 @@
 'use client';
 
-import { useUserData } from '@/app/context/user-data-context';
+import { useUserData } from '@/context/user-data-context';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   Collapsible,

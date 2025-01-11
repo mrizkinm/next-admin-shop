@@ -1,7 +1,7 @@
 "use client"
 
 import React from 'react';
-import { useUserData } from '../../context/user-data-context';
+import { useUserData } from '../../../context/user-data-context';
 import PageContainer from '@/components/page-container';
 import Heading from '@/components/heading';
 import ProfileForm from './components/profile-form';
