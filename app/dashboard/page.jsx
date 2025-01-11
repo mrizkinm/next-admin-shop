@@ -1,7 +1,7 @@
 "use client"
 
-import React, { useContext, useEffect, useState} from 'react'
-import { UserDataContext } from './user-data-context';
+import React, { useEffect, useState} from 'react'
+import { useUserData } from '../context/user-data-context';
 import {
   Card,
   CardContent,
@@ -15,7 +15,7 @@ import { Boxes, List, ShoppingBag, Users2 } from 'lucide-react';
 import { Skeleton } from "@/components/ui/skeleton";
 
 const Dashboard = () => {
-  const { user } = useContext(UserDataContext);
+  const { user } = useUserData();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 

@@ -5,7 +5,7 @@ import {
 import { cookies } from 'next/headers';
 import AppSidebarMenu from "@/components/app-sidebar-menu";
 import Header from "@/components/header";
-import { UserDataProvider } from "./user-data-context";
+import { UserDataProvider } from "../context/user-data-context";
 
 export const metadata = {
   title: 'Dashboard',

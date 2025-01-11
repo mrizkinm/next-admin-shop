@@ -1,6 +1,6 @@
 'use client';
 
-import { UserDataContext } from '@/app/dashboard/user-data-context';
+import { useUserData } from '@/app/context/user-data-context';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   Collapsible,
@@ -46,7 +46,7 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const navItems = [
   {
@@ -106,7 +106,7 @@ const navItems = [
 
 const AppSidebarMenu = () => {
   const pathname = usePathname();
-  const { user } = useContext(UserDataContext);
+  const { user } = useUserData();
 
   const [ shop, setShop] = useState({})
   const [ loading, setLoading ] = useState(true)

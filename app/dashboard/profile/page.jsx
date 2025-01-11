@@ -1,7 +1,7 @@
 "use client"
 
-import React, { useContext } from 'react';
-import { UserDataContext } from '../user-data-context';
+import React from 'react';
+import { useUserData } from '../../context/user-data-context';
 import PageContainer from '@/components/page-container';
 import Heading from '@/components/heading';
 import ProfileForm from './components/profile-form';
@@ -9,7 +9,7 @@ import ProfileSkeleton from './components/profile-skeleton';
 import { Separator } from '@/components/ui/separator';
 
 const ProfilePage = () => {
-  const { user } = useContext(UserDataContext);
+  const { user } = useUserData();
 
   return (
     <PageContainer scrollable={true}>

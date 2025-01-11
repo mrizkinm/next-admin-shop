@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useContext } from 'react'
+import React from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -13,14 +13,14 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { UserDataContext } from '@/app/dashboard/user-data-context';
+import { useUserData } from '@/app/context/user-data-context';
 import { useRouter } from 'next/navigation';
 import { Cog, LogOut, User } from 'lucide-react';
 import Link from 'next/link';
 
 const UserNav = () => {
   const router = useRouter();
-  const { user } = useContext(UserDataContext);
+  const { user } = useUserData();
 
   const onLogout = async () => {
     try {
