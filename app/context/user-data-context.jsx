@@ -1,10 +1,18 @@
 'use client';
 
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useContext } from 'react';
 import Cookies from 'js-cookie';
 import { jwtVerify } from 'jose';
 
 export const UserDataContext = createContext(); // Membuat Context Global
+
+export const useUserData = () => {
+  const context = useContext(UserDataContext);
+  if (!context) {
+    throw new Error("useUserData must be used within a UserDataProvider");
+  }
+  return context;
+};
 
 export const UserDataProvider = ({ children }) => {
   const [user, setUser] = useState(null);
