@@ -28,6 +28,11 @@ export const columns = (updateData) => [
     cell: ({row}) => format(row.original.createdAt, 'dd MMM yyyy HH:mm')
   },
   {
+    accessorKey: "orderTrxId",
+    header: ({ column }) => <SortableHeader column={column} title="Order ID" />,
+    cell: ({row}) => row.original.orderTrxId
+  },
+  {
     accessorKey: "customerId",
     header: ({ column }) => <SortableHeader column={column} title="Name" />,
     cell: ({row}) => {
