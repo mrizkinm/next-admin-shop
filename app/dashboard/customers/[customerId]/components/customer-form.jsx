@@ -17,7 +17,8 @@ const CustomerForm = ({initialData}) => {
     name: z.string().min(1),
     email: z.string().email().min(1),
     phone: z.string().min(1),
-    address: z.string().min(1)
+    address: z.string().min(1),
+    password: z.string().min(6),
   });
 
   const [loading, setLoading] = useState(false);
@@ -31,7 +32,8 @@ const CustomerForm = ({initialData}) => {
       name: '',
       email: '',
       phone: '',
-      address: ''
+      address: '',
+      password: ''
     }
   })
 
@@ -113,6 +115,24 @@ const CustomerForm = ({initialData}) => {
                   <FormLabel>Phone</FormLabel>
                   <FormControl>
                     <Input type="text" placeholder="Enter phone" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="password"
+                      placeholder="Password"
+                      className="w-full"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
