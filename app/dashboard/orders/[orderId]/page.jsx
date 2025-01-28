@@ -30,11 +30,10 @@ const DetailPage = async ({params}) => {
     }
   })
 
-  const isGuest = !!order.guestInfo;
-  const customerName = isGuest ? order.guestInfo.name : order.customer.name;
-  const customerEmail = isGuest ? order.guestInfo.email : order.customer.email;
-  const customerPhone = isGuest ? order.guestInfo.phone : order.customer.phone;
-  const customerAddress = isGuest ? order.guestInfo.address : order.customer.address;
+  const customerName = order.customer.name;
+  const customerEmail = order.customer.email;
+  const customerPhone = order.customer.phone;
+  const customerAddress = order.customer.address;
 
   const statusColors = {
     Pending: 'bg-yellow-500 text-white hover:bg-yellow-600',
@@ -84,8 +83,8 @@ const DetailPage = async ({params}) => {
         {/* Customer Info */}
         <Card>
           <CardHeader>
-            <CardTitle>{isGuest ? "Guest" : "Customer"} Details</CardTitle>
-            <CardDescription>Information about the {isGuest ? "guest" : "customer"}</CardDescription>
+            <CardTitle>Customer Details</CardTitle>
+            <CardDescription>Information about the customer</CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4">
             <div className="grid grid-cols-2 gap-4">
