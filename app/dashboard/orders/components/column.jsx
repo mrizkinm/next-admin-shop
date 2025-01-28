@@ -36,7 +36,7 @@ export const columns = (updateData) => [
     accessorKey: "customerId",
     header: ({ column }) => <SortableHeader column={column} title="Name" />,
     cell: ({row}) => {
-      const customerName = row.original.customer?.name || row.original.guestInfo?.name || 'Unknown';
+      const customerName = row.original.customer?.name;
       return customerName;
     }
   },
