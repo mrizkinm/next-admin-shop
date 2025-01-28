@@ -1,6 +1,7 @@
 import db from "@/lib/db";
 import { NextResponse } from "next/server"
 import { z } from "zod";
+import bcrypt from "bcryptjs";
 
 export async function GET(req) {
   try {
@@ -21,14 +22,15 @@ const formSchema = z.object({
   name: z.string().min(1),
   email: z.string().email().min(1),
   phone: z.string().min(1),
-  address: z.string().min(1)
+  address: z.string().min(1),
+  password: z.string().min(6)
 });
 
 export async function POST(req) {
   try {
-    const { name, email, phone, address } = await req.json();
+    const { name, email, phone, address, password } = await req.json();
 
-    const result = formSchema.safeParse({ name, email, phone, address });
+    const result = formSchema.safeParse({ name, email, phone, address, password });
      
     if (!result.success) {
       const errors = result.error.flatten().fieldErrors;
@@ -41,12 +43,23 @@ export async function POST(req) {
       return NextResponse.json({ errors: simplifiedErrors }, { status: 400 });
     }
 
+    const existingUser = await db.customer.findUnique({
+      where: { email }
+    });
+
+    if (existingUser) {
+      return NextResponse.json({ errors: 'User already exists' }, { status: 400 });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const customer = await db.customer.create({
       data: {
         name,
         email,
         phone,
-        address
+        address,
+        password: hashedPassword
       }
     })
 
