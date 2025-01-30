@@ -41,3 +41,4 @@ next-env.d.ts
 
 /prisma
 /public/img/products
+/public/img/categories
