@@ -8,14 +8,53 @@ const uploadFolder = path.join(process.cwd(), "public/img/products");
 
 export async function GET(req) {
   try {
-    const product = await db.product.findMany({
-      include: {
-        category: true, // Memuat data dari relasi Category
-        images: true // Memuat data dari relasi Image
-      },
-    })
+    // Parse query parameters
+    const { searchParams } = new URL(req.url);
+    const page = parseInt(searchParams.get("page")) || 1;
+    const limit = parseInt(searchParams.get("limit")) || 10;
+    const categories = searchParams.get("categories");
+    const search = searchParams.get("search");
 
-    return NextResponse.json(product)
+    // Convert categories string to array if exists
+    const categoriesArray = categories ? categories.split(".").map(Number) : [];
+
+    // Query products from database
+    const whereClause = {
+      AND: [
+        search ? { name: { contains: search } } : {},
+        categoriesArray.length > 0 ? { categoryId: { in: categoriesArray } } : {},
+        { isArchived: false },
+      ],
+    };
+
+    const totalProducts = await db.product.count({ where: whereClause });
+    const products = await db.product.findMany({
+      where: whereClause,
+      include: { category: true, images: true },
+      skip: (page - 1) * limit,
+      take: limit,
+      orderBy: { createdAt: "desc" },
+    });
+
+    // Mock current time
+    const currentTime = new Date().toISOString();
+
+    return NextResponse.json({
+      time: currentTime,
+      total_products: totalProducts,
+      offset: (page - 1) * limit,
+      limit,
+      products,
+    });
+
+    // const product = await db.product.findMany({
+    //   include: {
+    //     category: true, // Memuat data dari relasi Category
+    //     images: true // Memuat data dari relasi Image
+    //   },
+    // })
+
+    // return NextResponse.json(product)
   } catch (error) {
     console.error("Error get data", error)
     return NextResponse.json({ errors: "Internal Error" }, {status: 500})
