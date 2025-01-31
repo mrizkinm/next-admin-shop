@@ -14,12 +14,20 @@ export async function GET(req) {
     // Query products from database
     const whereClause = {
       AND: [
-        search ? { name: { contains: search } } : {},
+        search
+        ? {
+            OR: [
+              { name: { contains: search } },
+              { email: { contains: search } },
+              { phone: { contains: search } },
+            ],
+          }
+        : {},
       ],
     };
 
     const total = await db.customer.count({ where: whereClause });
-    const orders = await db.customer.findMany({
+    const customers = await db.customer.findMany({
       where: whereClause,
       include: { orders: true },
       skip: (page - 1) * limit,
@@ -35,7 +43,7 @@ export async function GET(req) {
       total: total,
       offset: (page - 1) * limit,
       limit,
-      data: orders,
+      data: customers,
     });
   } catch (error) {
     console.error("Error get data", error)
