@@ -1,6 +1,8 @@
 import db from "@/lib/db";
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import fs from "fs";
+import path from "path";
 
 export async function GET(req, {params}) {
   try {
@@ -87,24 +89,53 @@ export async function PATCH(req, {params}) {
 
 export async function DELETE(req, {params}) {
   try {
-    if (!params.productId) {
-      return new NextResponse.json({ errors: "Harus ada product id" }, {status: 400})
+    const paramId = await params.productId;
+    const productId = parseInt(paramId);
+    if (!productId) {
+      return NextResponse.json({ errors: "Harus ada product id" }, {status: 400})
     }
 
-    await db.image.deleteMany({
-      where: {
-        productId: parseInt(params.productId)
-      }
-    })
+    // Mulai transaksi
+    const result = await db.$transaction(async (prisma) => {
+      // Ambil semua gambar terkait
+      const images = await prisma.image.findMany({
+        where: {
+          productId: productId,
+        },
+      });
 
-    await db.product.deleteMany({
-      where: {
-        id: parseInt(params.productId)
+      // Hapus data gambar
+      await prisma.image.deleteMany({
+        where: {
+          productId: productId,
+        },
+      });
+
+      // Hapus data produk
+      await prisma.product.deleteMany({
+        where: {
+          id: productId,
+        },
+      });
+
+      // Hapus file fisik gambar
+      for (let image of images) {
+        const imagePath = path.join(process.cwd(), 'public', image.url);
+        if (fs.existsSync(imagePath)) {
+          fs.unlinkSync(imagePath);
+        }
       }
-    })
-    return NextResponse.json({ msg: "Success to delete data" });
+
+      return { success: true };
+    });
+
+    if (result.success) {
+      return NextResponse.json({ msg: "Success to delete data" });
+    }
+
+    return NextResponse.json({ errors: "Failed to delete data" }, { status: 500 });
   } catch (error) {
     console.log('Error delete data', error);
-    return NextResponse.json({ errors: "Internal server error" }, {status: 500})
+    return new NextResponse.json({ errors: "Internal server error" }, {status: 500})
   }
 }
