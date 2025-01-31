@@ -1,10 +1,18 @@
 import db from "@/lib/db";
 import { NextResponse } from "next/server"
 import { z } from "zod";
+import fs from "fs";
+import path from "path";
+
+const uploadFolder = path.join(process.cwd(), "public/img");
 
 export async function GET(req) {
   try {
-    const shop = await db.shop.findMany()
+    const shop = await db.shop.findUnique({
+      where: {
+        id: 1
+      }
+    })
 
     return NextResponse.json(shop)
   } catch (error) {
@@ -20,14 +28,27 @@ const formSchema = z.object({
   address: z.string().min(1),
   phone: z.string().max(15),
   email: z.string().min(1).email(),
-  description: z.string().min(1)
+  description: z.string().min(1),
+  images: z.any()
 });
 
 export async function PATCH(req) {
   try {
-    const { name, phone, address, email, description } = await req.json();
+    const formData = await req.formData();
+    
+    // Ambil field data dan file
+    const name = formData.get('name');
+    const phone = formData.get('phone');
+    const address = formData.get('address');
+    const description = formData.get('description');
+    const email = formData.get('email');
 
-    const result = formSchema.safeParse({ name, phone, address, email, description });
+    const images = [];
+    for (let i = 0; i < formData.getAll('images').length; i++) {
+      images.push(formData.getAll('images')[i]);
+    }
+
+    const result = formSchema.safeParse({ name, phone, address, email, description, images });
      
     if (!result.success) {
       const errors = result.error.flatten().fieldErrors;
@@ -40,6 +61,17 @@ export async function PATCH(req) {
       return NextResponse.json({ errors: simplifiedErrors }, { status: 400 });
     }
 
+    // Proses dan simpan gambar ke server
+    const imageUrls = [];
+    for (let image of images) {
+      const fileName = `${Date.now()}-${image.name}`;
+      const filePath = path.join(uploadFolder, fileName);
+      const buffer = await image.arrayBuffer();  // Ambil buffer dari file
+
+      fs.writeFileSync(filePath, Buffer.from(buffer));  // Menyimpan gambar ke disk
+      imageUrls.push(`/img/${fileName}`);
+    }
+
     const shop = await db.shop.update({
       where: {
         id: 1
@@ -49,7 +81,8 @@ export async function PATCH(req) {
         phone,
         address,
         email,
-        description
+        description,
+        image: imageUrls[0]
       }
     })
 
