@@ -1,6 +1,8 @@
 import db from "@/lib/db";
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import fs from "fs";
+import path from "path";
 
 export async function GET(req, {params}) {
   try {
@@ -67,7 +69,17 @@ export async function PATCH(req, {params}) {
 export async function DELETE(req, {params}) {
   try {
     if (!params.categoryId) {
-      return new NextResponse({ errors: "Harus ada category id" }, {status: 400})
+      return NextResponse({ errors: "Harus ada category id" }, {status: 400})
+    }
+
+    const category = await db.category.findUnique({
+      where: {
+        id: parseInt(params.categoryId)
+      }
+    })
+
+    if (!category) {
+      return NextResponse({ errors: "Category not found" }, {status: 404})
     }
 
     await db.category.deleteMany({
@@ -75,6 +87,11 @@ export async function DELETE(req, {params}) {
         id: parseInt(params.categoryId)
       }
     })
+
+    // Define the image path (e.g., inside 'public/uploads')
+    const imagePath = path.join(process.cwd(), 'public', category.image);
+    fs.unlinkSync(imagePath);
+    
     return NextResponse.json({ msg: "Success to delete data" });
   } catch (error) {
     console.log('Error delete data', error);
