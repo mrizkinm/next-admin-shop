@@ -5,18 +5,58 @@ import bcrypt from "bcryptjs";
 
 export async function GET(req) {
   try {
-    const customer = await db.customer.findMany({
-      include: {
-        orders: true
-      }
-    })
+    // Parse query parameters
+    const { searchParams } = new URL(req.url);
+    const page = parseInt(searchParams.get("page")) || 1;
+    const limit = parseInt(searchParams.get("limit")) || 10;
+    const search = searchParams.get("search");
 
-    return NextResponse.json(customer)
+    // Query products from database
+    const whereClause = {
+      AND: [
+        search ? { name: { contains: search } } : {},
+      ],
+    };
+
+    const total = await db.customer.count({ where: whereClause });
+    const orders = await db.customer.findMany({
+      where: whereClause,
+      include: { orders: true },
+      skip: (page - 1) * limit,
+      take: limit,
+      orderBy: { createdAt: "desc" },
+    });
+
+    // Mock current time
+    const currentTime = new Date().toISOString();
+
+    return NextResponse.json({
+      time: currentTime,
+      total: total,
+      offset: (page - 1) * limit,
+      limit,
+      data: orders,
+    });
   } catch (error) {
     console.error("Error get data", error)
-    return NextResponse.json({ errors: "Internal server error" }, {status: 500})
+    return NextResponse.json({ errors: "Internal Error" }, {status: 500})
   }
 }
+
+// export async function GET(req) {
+//   try {
+//     const customer = await db.customer.findMany({
+//       include: {
+//         orders: true
+//       }
+//     })
+
+//     return NextResponse.json(customer)
+//   } catch (error) {
+//     console.error("Error get data", error)
+//     return NextResponse.json({ errors: "Internal server error" }, {status: 500})
+//   }
+// }
 
 const formSchema = z.object({
   name: z.string().min(1),
