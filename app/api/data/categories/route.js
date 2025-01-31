@@ -1,13 +1,17 @@
 import db from "@/lib/db";
 import { NextResponse } from "next/server"
 import { z } from "zod";
+import fs from "fs";
+import path from "path";
+
+const uploadFolder = path.join(process.cwd(), "public/img/categories");
 
 export async function GET(req) {
   try {
     const category = await db.category.findMany({
-      include: {
-        products: true // Memuat data dari relasi Category
-      },
+      // include: {
+      //   products: true // Memuat data dari relasi Category
+      // },
     })
 
     return NextResponse.json(category)
@@ -18,14 +22,29 @@ export async function GET(req) {
 }
 
 const formSchema = z.object({
-  name: z.string().min(1)
+  name: z.string().min(1),
+  images: z
+  .array(z.instanceof(File))
+  .min(1, 'Please upload at least one file.')
+  .max(1, 'You can upload up to 1 files.')
+  .refine((files) => files.every((file) => file.type.startsWith('image/')), {
+    message: 'Only image files are allowed.',
+  }),
 });
 
 export async function POST(req) {
   try {
-    const { name } = await req.json();
+    const formData = await req.formData();
+    
+    // Ambil field data dan file
+    const name = formData.get('name');
+    
+    const images = [];
+    for (let i = 0; i < formData.getAll('images').length; i++) {
+      images.push(formData.getAll('images')[i]);
+    }
 
-    const result = formSchema.safeParse({ name });
+    const result = formSchema.safeParse({ name, images });
     
     if (!result.success) {
       const errors = result.error.flatten().fieldErrors;
@@ -38,9 +57,21 @@ export async function POST(req) {
       return NextResponse.json({ errors: simplifiedErrors }, { status: 400 });
     }
 
+    // Proses dan simpan gambar ke server
+    const imageUrls = [];
+    for (let image of images) {
+      const fileName = `${Date.now()}-${image.name}`;
+      const filePath = path.join(uploadFolder, fileName);
+      const buffer = await image.arrayBuffer();  // Ambil buffer dari file
+
+      fs.writeFileSync(filePath, Buffer.from(buffer));  // Menyimpan gambar ke disk
+      imageUrls.push(`/img/categories/${fileName}`);
+    }
+
     const category = await db.category.create({
       data: {
-        name
+        name,
+        image: imageUrls[0]
       }
     })
 
