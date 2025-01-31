@@ -17,7 +17,14 @@ export async function GET(req) {
     // Query products from database
     const whereClause = {
       AND: [
-        search ? { customer: { name: { contains: search } } } : {},
+        search
+        ? {
+            OR: [
+              { customer: { name: { contains: search } } },
+              { orderTrxId: { contains: search } }
+            ],
+          }
+        : {},
         statusArray.length > 0 ? { status: { in: statusArray } } : {},
       ],
     };
