@@ -8,18 +8,57 @@ const uploadFolder = path.join(process.cwd(), "public/img/categories");
 
 export async function GET(req) {
   try {
-    const category = await db.category.findMany({
-      // include: {
-      //   products: true // Memuat data dari relasi Category
-      // },
-    })
+    // Parse query parameters
+    const { searchParams } = new URL(req.url);
+    const page = parseInt(searchParams.get("page")) || 1;
+    const limit = parseInt(searchParams.get("limit")) || 10;
+    const search = searchParams.get("search");
 
-    return NextResponse.json(category)
+    // Query products from database
+    const whereClause = {
+      AND: [
+        search ? { name: { contains: search } } : {},
+      ],
+    };
+
+    const total = await db.category.count({ where: whereClause });
+    const categories = await db.category.findMany({
+      where: whereClause,
+      skip: (page - 1) * limit,
+      take: limit,
+      orderBy: { createdAt: "desc" },
+    });
+
+    // Mock current time
+    const currentTime = new Date().toISOString();
+
+    return NextResponse.json({
+      time: currentTime,
+      total: total,
+      offset: (page - 1) * limit,
+      limit,
+      data: categories,
+    });
   } catch (error) {
     console.error("Error get data", error)
-    return NextResponse.json({ errors: "Internal server error" }, {status: 500})
+    return NextResponse.json({ errors: "Internal Error" }, {status: 500})
   }
 }
+
+// export async function GET(req) {
+//   try {
+//     const category = await db.category.findMany({
+//       // include: {
+//       //   products: true // Memuat data dari relasi Category
+//       // },
+//     })
+
+//     return NextResponse.json(category)
+//   } catch (error) {
+//     console.error("Error get data", error)
+//     return NextResponse.json({ errors: "Internal server error" }, {status: 500})
+//   }
+// }
 
 const formSchema = z.object({
   name: z.string().min(1),
