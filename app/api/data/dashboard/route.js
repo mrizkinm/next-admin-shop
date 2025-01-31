@@ -14,11 +14,7 @@ export async function GET(req) {
       orderBy: { createdAt: "desc" },
       where: { status: "Pending" },
       include: {
-        items: {
-          include: {
-            product: true // Ini akan menyertakan informasi produk
-          }
-        },
+        items: true,
         customer: true, // Include customer data
       },
     });
