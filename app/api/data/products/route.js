@@ -21,7 +21,14 @@ export async function GET(req) {
     // Query products from database
     const whereClause = {
       AND: [
-        search ? { name: { contains: search } } : {},
+        search
+        ? {
+            OR: [
+              { name: { contains: search } },
+              { description: { contains: search } },
+            ],
+          }
+        : {},
         categoriesArray.length > 0 ? { categoryId: { in: categoriesArray } } : {},
         { isArchived: false },
       ],
@@ -41,10 +48,10 @@ export async function GET(req) {
 
     return NextResponse.json({
       time: currentTime,
-      total_products: totalProducts,
+      total: totalProducts,
       offset: (page - 1) * limit,
       limit,
-      products,
+      data: products,
     });
 
     // const product = await db.product.findMany({
