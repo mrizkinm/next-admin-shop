@@ -9,47 +9,53 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod"
 import toast from "react-hot-toast";
 import React, { useState } from 'react';
+import FileInput from '@/components/file-input';
+import { useErrorHandler } from '@/hooks/use-error-handler';
 
 const CategoryForm = ({initialData}) => {
   const formSchema = z.object({
-    name: z.string().min(1)
+    name: z.string().min(1),
+    images: initialData ? z.any() : 
+    z.array(z.instanceof(File))
+    .min(1, 'Please upload at least one file.')
+    .max(1, 'You can upload up to 1 files.')
+    .refine((files) => files.every((file) => file.type.startsWith('image/')), {
+      message: 'Only image files are allowed.',
+    }),
   });
 
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const params = useParams();
+  const { handleError } = useErrorHandler();
   
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: initialData || {
-      name: ''
+      name: '',
+      images: [],
     }
   })
 
   const onSubmit = async (data) => {
     setLoading(true);
+    const formData = new FormData();
+    formData.append('name', data.name);
 
     try {
       let response;
       if (initialData) {
         response = await fetch(`/api/data/categories/${params.categoryId}`, {
           method: "PATCH",
-          body: JSON.stringify(data),
-          headers: {
-            "Content-Type": "application/json",
-          },
+          body: formData
         });
       } else {
+        formData.append('images', data.images[0]);
         response = await fetch("/api/data/categories", {
           method: "POST",
-          body: JSON.stringify(data),
-          headers: {
-            "Content-Type": "application/json",
-          },
+          body: formData
         });
       }
-
-      const responseData = await response.json();
 
       if (response.ok) {
         toast.success('Success to insert data');
@@ -57,7 +63,9 @@ const CategoryForm = ({initialData}) => {
           router.push("/dashboard/categories");
         }, 1000);
       } else {
-        toast.error(responseData.error);
+        const { errors } = await response.json();
+        // Menampilkan error toast untuk setiap field yang gagal
+        handleError(errors);
       }
     } catch (error) {
       console.log(error)
@@ -69,7 +77,22 @@ const CategoryForm = ({initialData}) => {
     <div>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-1">
+                <FormField
+                  control={form.control}
+                  name="images"
+                  render={({ field }) => (
+                    <div className="space-y-6">
+                      <FormItem className="w-full">
+                        <FormLabel>Image</FormLabel>
+                        <FormControl>
+                          <FileInput name={field.name} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    </div>
+                  )}
+                />
                 <FormField
                   control={form.control}
                   name="name"
