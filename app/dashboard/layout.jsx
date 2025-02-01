@@ -6,6 +6,7 @@ import { cookies } from 'next/headers';
 import AppSidebarMenu from "@/components/app-sidebar-menu";
 import Header from "@/components/header";
 import { UserDataProvider } from "../../context/user-data-context";
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
 export const metadata = {
   title: 'Dashboard',
@@ -21,10 +22,12 @@ export default async function DashboardPageLayout({ children }) {
       <SidebarProvider defaultOpen={defaultOpen}>
         <AppSidebarMenu />
         <SidebarInset>
-          <main>
-            <Header />
-            {children}
-          </main>
+          <NuqsAdapter>
+            <main>
+              <Header />
+              {children}
+            </main>
+          </NuqsAdapter>
         </SidebarInset>
       </SidebarProvider>
     </UserDataProvider>
