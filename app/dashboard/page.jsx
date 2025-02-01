@@ -134,7 +134,7 @@ const Dashboard = () => {
                     {data?.recentOrders.map((order, index) => (
                       <TableRow key={order.id}>
                         <TableCell>{index + 1}</TableCell>
-                        <TableCell>{order.id}</TableCell>
+                        <TableCell>{order.orderTrxId}</TableCell>
                         <TableCell>{order.customer.name}</TableCell>
                         <TableCell>
                           Rp {new Intl.NumberFormat("en-US").format(order.totalAmount)}
