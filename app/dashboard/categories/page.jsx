@@ -1,38 +1,23 @@
-"use client"
-
 import Heading from '@/components/heading'
 import { Separator } from '@/components/ui/separator'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { Plus } from 'lucide-react'
 import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
-import { DataTable } from "@/components/ui/data-table";
-import { columns } from "./components/column";
+import React, { Suspense } from 'react'
 import PageContainer from '@/components/page-container'
 import TableSkeleton from '@/components/table-skeleton'
+import TableAction from './components/table-action'
+import ListingPage from './components/listing'
+import { searchParamsCache, serialize } from '@/lib/searchparams'
 
-const CategoriesPage = () => {
-  const [ data, setData] = useState([])
-  const [ loading, setLoading ] = useState(true)
+const CategoriesPage = async (props) => {
+  const searchParams = await props.searchParams;
+  // Allow nested RSCs to access the search params (in a type-safe way)
+  searchParamsCache.parse(searchParams);
 
-  const getData = async () => {
-    try {
-      const response = await fetch("/api/data/categories", { method: "GET" });
-
-      const responseData = await response.json();
-      setData(responseData);
-    } catch (error) {
-      console.error('Gagal mendapatkan akses token baru:', error.message);
-      throw error;
-    } finally {
-      setLoading(false)
-    };
-  };
-  
-  useEffect(() => {
-    getData()
-  }, [])
+  // This key is used for invoke suspense if any of the search params changed (used for filters).
+  const key = serialize({ ...searchParams });
 
   return (
     <PageContainer scrollable={true}>
@@ -51,11 +36,18 @@ const CategoriesPage = () => {
           </Link>
         </div>
         <Separator />
-        {!loading ? (
+        <TableAction />
+        <Suspense
+          key={key}
+          fallback={<TableSkeleton columnCount={3} rowCount={10} />}
+        >
+          <ListingPage />
+        </Suspense>
+        {/* {!loading ? (
           <DataTable data={data} columns={columns} searchKey="name" />
         ) : (
           <TableSkeleton columnCount={3} rowCount={10} />
-        )}
+        )} */}
       </div>
     </PageContainer>
   )
