@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { jwtVerify } from 'jose';
-import { AnyARecord } from 'node:dns';
 
 export async function middleware(req: NextRequest) {
   const refreshToken = req.cookies.get('refreshToken');
