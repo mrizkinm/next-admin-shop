@@ -1,6 +1,6 @@
 import { Poppins, Montserrat } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/providers/theme-provider";
+import { ThemeProvider } from "@/providers/theme-provider";
 import { Toaster } from 'react-hot-toast';
 import NextTopLoader from "nextjs-toploader";
 import { getStoreInfo } from "@/lib/api";
@@ -29,7 +29,9 @@ export async function generateMetadata() {
   };
 }
 
-export default async function RootLayout({ children }) {
+export default async function RootLayout({ children }: Readonly<{
+  children: React.ReactNode;
+}>) {
   const store = await getStoreInfo();
   const storeInfo = store;
 
