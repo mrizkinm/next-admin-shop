@@ -11,14 +11,20 @@ import toast from "react-hot-toast";
 import React, { useState } from 'react';
 import FileInput from '@/components/file-input';
 import { useErrorHandler } from '@/hooks/use-error-handler';
+import { Category } from '@/app/types';
 
-const CategoryForm = ({initialData}) => {
+interface CategoryFormProps {
+  initialData: Category | null;
+}
+
+const CategoryForm: React.FC<CategoryFormProps> = ({initialData}) => {
+  const maxFiles = 1;
   const formSchema = z.object({
     name: z.string().min(1),
     images: initialData ? z.any() : 
     z.array(z.instanceof(File))
     .min(1, 'Please upload at least one file.')
-    .max(1, 'You can upload up to 1 files.')
+    .max(maxFiles, `You can upload up to ${maxFiles} files.`)
     .refine((files) => files.every((file) => file.type.startsWith('image/')), {
       message: 'Only image files are allowed.',
     }),
@@ -29,7 +35,7 @@ const CategoryForm = ({initialData}) => {
   const params = useParams();
   const { handleError } = useErrorHandler();
   
-  const form = useForm({
+  const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData || {
       name: '',
@@ -37,7 +43,7 @@ const CategoryForm = ({initialData}) => {
     }
   })
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
     setLoading(true);
     const formData = new FormData();
     formData.append('name', data.name);
@@ -75,47 +81,44 @@ const CategoryForm = ({initialData}) => {
   };
   return (
     <div>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-1">
-                <FormField
-                  control={form.control}
-                  name="images"
-                  render={({ field }) => (
-                    <div className="space-y-6">
-                      <FormItem className="w-full">
-                        <FormLabel>Image</FormLabel>
-                        <FormControl>
-                          <FileInput name={field.name} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    </div>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Name</FormLabel>
-                      <FormControl>
-                        <Input type="text" placeholder="Enter category name" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <Button
-                type="submit"
-                disabled={loading}
-              >
-                {loading ? "Loading..." : "Submit"}
-              </Button>
-            </form>
-          </Form>
-        </div>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-1">
+            <FormField
+              control={form.control}
+              name="images"
+              render={({ field }) => (
+                <div className="space-y-6">
+                  <FormItem className="w-full">
+                    <FormLabel>Image</FormLabel>
+                    <FormControl>
+                      <FileInput name={field.name} maxFiles={maxFiles} images={initialData?.image ? [ { url: initialData.image }] : []} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                </div>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input type="text" placeholder="Enter category name" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <Button type="submit" disabled={loading}>
+            {loading ? "Loading..." : "Submit"}
+          </Button>
+        </form>
+      </Form>
+    </div>
   )
 }
 
