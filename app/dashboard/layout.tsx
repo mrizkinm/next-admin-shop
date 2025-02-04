@@ -13,7 +13,9 @@ export const metadata = {
   description: 'Halaman dashboard',
 };
 
-export default async function DashboardPageLayout({ children }) {
+export default async function DashboardPageLayout({ children }: Readonly<{
+  children: React.ReactNode;
+}>) {
   const cookieStore = await cookies();
   const defaultOpen = cookieStore.get('sidebar:state')?.value === 'true';
 
