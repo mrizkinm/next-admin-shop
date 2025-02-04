@@ -5,24 +5,24 @@ import CategoryForm from './components/category-form';
 import db from "@/lib/db";
 import PageContainer from '@/components/page-container';
 
-const AddCategories = async ({params}) => {
+interface CategoryPageProps {
+  params: {
+    categoryId: string;
+  }
+}
+
+const AddCategories: React.FC<CategoryPageProps> = async ({params}) => {
   const { categoryId } = await params;
 
-  let category;
-  let title = '';
-  let description = '';
-  if (categoryId != 'add') {
-    category = await db.category.findUnique({
-      where: {
-        id: parseInt(categoryId)
-      }
+  const isEdit = categoryId !== 'add';
+  const title = isEdit ? 'Edit Category' : 'Add Category';
+  const description = isEdit ? 'Edit existing category' : 'Add new category';
+
+  const category = isEdit
+  ? await db.category.findUnique({
+      where: { id: parseInt(categoryId) }
     })
-    title = 'Edit Category';
-    description = 'Edit existing category';
-  } else {
-    title = 'Add Category';
-    description = 'Add new category';
-  }
+  : null;
 
   return (
     <PageContainer scrollable={true}>
