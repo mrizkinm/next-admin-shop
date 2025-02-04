@@ -4,10 +4,10 @@ import { z } from "zod";
 import fs from "fs";
 import path from "path";
 
-export async function GET(req, {params}) {
+export async function GET(req: Request, {params} : {params: {categoryId: string}}) {
   try {
     if (!params.categoryId) {
-      return new NextResponse({ errors: "Harus ada category id" }, {status: 400})
+      return NextResponse.json({ errors: "Harus ada category id" }, {status: 400})
     }
 
     const category = await db.category.findUnique({
@@ -21,7 +21,7 @@ export async function GET(req, {params}) {
     return NextResponse.json(category);
   } catch (error) {
     console.log('ERROR category GET', error);
-    return NextResponse({ errors: "Internal server error" }, {status: 500})
+    return NextResponse.json({ errors: "Internal server error" }, {status: 500})
   }
 }
 
@@ -29,13 +29,18 @@ const formSchema = z.object({
   name: z.string().min(1)
 });
 
-export async function PATCH(req, {params}) {
+export async function PATCH(req: Request, {params} : {params: {categoryId: string}}) {
   try {
     if (!params.categoryId) {
-      return new NextResponse({ errors: "Harus ada category id" }, {status: 400})
+      return NextResponse.json({ errors: "Harus ada category id" }, {status: 400})
     }
     
-    const { name } = await req.json();
+    const formData = await req.formData();
+
+    const name = formData.get('name') as string;
+    if (!name) {
+      return NextResponse.json({ errors: { name: "Name is required" } }, { status: 400 });
+    }
 
     const result = formSchema.safeParse({ name });
 
@@ -62,14 +67,14 @@ export async function PATCH(req, {params}) {
     return NextResponse.json({ msg: "Success to update data" });
   } catch (error) {
     console.error('Error patch data', error);
-    return new NextResponse({ errors: "Internal server error" }, {status: 500})
+    return NextResponse.json({ errors: "Internal server error" }, {status: 500})
   }
 }
 
-export async function DELETE(req, {params}) {
+export async function DELETE(req: Request, {params} : {params: {categoryId: string}}) {
   try {
     if (!params.categoryId) {
-      return NextResponse({ errors: "Harus ada category id" }, {status: 400})
+      return NextResponse.json({ errors: "Harus ada category id" }, {status: 400})
     }
 
     const category = await db.category.findUnique({
@@ -79,7 +84,7 @@ export async function DELETE(req, {params}) {
     })
 
     if (!category) {
-      return NextResponse({ errors: "Category not found" }, {status: 404})
+      return NextResponse.json({ errors: "Category not found" }, {status: 404})
     }
 
     await db.category.deleteMany({
@@ -89,12 +94,14 @@ export async function DELETE(req, {params}) {
     })
 
     // Define the image path (e.g., inside 'public/uploads')
-    const imagePath = path.join(process.cwd(), 'public', category.image);
-    fs.unlinkSync(imagePath);
+    if (category.image) {
+      const imagePath = path.join(process.cwd(), 'public', category.image);
+      fs.unlinkSync(imagePath);
+    }
     
     return NextResponse.json({ msg: "Success to delete data" });
   } catch (error) {
     console.log('Error delete data', error);
-    return new NextResponse({ errors: "Internal server error" }, {status: 500})
+    return NextResponse.json({ errors: "Internal server error" }, {status: 500})
   }
 }
