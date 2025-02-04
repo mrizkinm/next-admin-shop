@@ -1,18 +1,21 @@
 export interface StoreInfo {
-  name: string; // Nama toko
-  address: string; // Alamat toko
-  phone: string; // Nomor telepon toko
+  id: number;
+  name: string;
+  address: string;
+  phone: string;
   email: string;
-  image: string;
   description: string;
+  image?: string | null; // Bisa null sesuai skema Prisma
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface Image {
   id: number;
   productId: number;
   url: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface Category {
@@ -27,16 +30,18 @@ export interface Category {
 export interface Product {
   id: number;
   categoryId: number;
-  category: Category;
+  category?: Category; // Relasi ke Category
   name: string;
   price: number;
   isFeatured: boolean;
   isArchived: boolean;
-  images: Image[];
+  images?: Image[]; // Relasi ke Image
   description: string;
   quantity: number;
-  createdAt: string;
-  updatedAt: string;
+  orderItems?: OrderItem[]; // Relasi ke OrderItem
+  carts?: Cart[]; // Relasi ke Cart
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface Order {
@@ -48,8 +53,8 @@ export interface Order {
   totalAmount: number;
   status: string; // Status pesanan
   orderTrxId: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface OrderItem {
@@ -60,22 +65,22 @@ export interface OrderItem {
   product: Product;
   quantity: number; // Jumlah item yang dipesan
   price: number; // Harga satuan saat dipesan
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface Customer {
   id: number;
-  name: string; // Nama pelanggan
-  email?: string | null; // Email pelanggan, opsional
-  phone?: string | null; // Nomor telepon pelanggan, opsional
-  address?: string | null; // Alamat pelanggan, opsional
-  orders: Order[]; // Relasi ke tabel Order
-  password: string; // Kata sandi pelanggan
-  token?: string | null; // Token opsional
-  carts: Cart[]; // Relasi ke tabel Cart
-  createdAt: string;
-  updatedAt: string;
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  password: string;
+  token: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  orders?: Order[]; // Relasi ke Order
+  carts?: Cart[];   // Relasi ke Cart
 }
 
 export interface Cart {
@@ -85,6 +90,16 @@ export interface Cart {
   productId: number;
   product: Product;
   quantity: number; // Default 1
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+  password: string;
+  token: string | null; // Bisa null sesuai skema Prisma
+  createdAt: Date;
+  updatedAt: Date;
 }
