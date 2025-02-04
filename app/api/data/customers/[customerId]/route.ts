@@ -2,10 +2,10 @@ import db from "@/lib/db";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-export async function GET(req, {params}) {
+export async function GET(req: Request, {params} : {params: {customerId: string}}) {
   try {
     if (!params.customerId) {
-      return new NextResponse({ errors: "Harus ada customer id" }, {status: 400})
+      return NextResponse.json({ errors: "Harus ada customer id" }, {status: 400})
     }
 
     const customer = await db.customer.findUnique({
@@ -19,7 +19,7 @@ export async function GET(req, {params}) {
     return NextResponse.json(customer);
   } catch (error) {
     console.log('ERROR customer GET', error);
-    return NextResponse({ errors: "Internal server error" }, {status: 500})
+    return NextResponse.json({ errors: "Internal server error" }, {status: 500})
   }
 }
 
@@ -30,10 +30,10 @@ const formSchema = z.object({
   address: z.string().min(1)
 });
 
-export async function PATCH(req, {params}) {
+export async function PATCH(req: Request, {params} : {params: {customerId: string}}) {
   try {
     if (!params.customerId) {
-      return new NextResponse({ errors: "Harus ada customer id" }, {status: 400})
+      return NextResponse.json({ errors: "Harus ada customer id" }, {status: 400})
     }
     
     const { name, email, phone, address } = await req.json();
@@ -66,14 +66,14 @@ export async function PATCH(req, {params}) {
     return NextResponse.json({ msg: "Success to update data" });
   } catch (error) {
     console.error('Error patch data', error);
-    return new NextResponse({ errors: "Internal server error" }, {status: 500})
+    return NextResponse.json({ errors: "Internal server error" }, {status: 500})
   }
 }
 
-export async function DELETE(req, {params}) {
+export async function DELETE(req: Request, {params} : {params: {customerId: string}}) {
   try {
     if (!params.customerId) {
-      return new NextResponse({ errors: "Harus ada customer id" }, {status: 400})
+      return NextResponse.json({ errors: "Harus ada customer id" }, {status: 400})
     }
 
     await db.customer.deleteMany({
@@ -84,6 +84,6 @@ export async function DELETE(req, {params}) {
     return NextResponse.json({ msg: "Success to delete data" });
   } catch (error) {
     console.log('Error delete data', error);
-    return new NextResponse({ errors: "Internal server error" }, {status: 500})
+    return NextResponse.json({ errors: "Internal server error" }, {status: 500})
   }
 }
