@@ -3,12 +3,12 @@ import { NextResponse } from "next/server"
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 
-export async function GET(req) {
+export async function GET(req: Request) {
   try {
     // Parse query parameters
     const { searchParams } = new URL(req.url);
-    const page = parseInt(searchParams.get("page")) || 1;
-    const limit = parseInt(searchParams.get("limit")) || 10;
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "10");
     const search = searchParams.get("search");
 
     // Query products from database
@@ -32,7 +32,7 @@ export async function GET(req) {
       include: { orders: true },
       skip: (page - 1) * limit,
       take: limit,
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: "asc" },
     });
 
     // Mock current time
@@ -74,7 +74,7 @@ const formSchema = z.object({
   password: z.string().min(6)
 });
 
-export async function POST(req) {
+export async function POST(req: Request) {
   try {
     const { name, email, phone, address, password } = await req.json();
 
