@@ -1,7 +1,7 @@
 import db from "@/lib/db";
 import { NextResponse } from "next/server"
 
-export async function POST(req) {
+export async function POST(req: Request) {
   try {
     const { action, id, items } = await req.json();
     let status = "";
@@ -31,13 +31,13 @@ export async function POST(req) {
   }
 }
 
-async function updateProductStockFromOrder(orderId, items) {
+async function updateProductStockFromOrder(id: string, items: any[]) {
   try {
     const updateProductQuantities = await db.$transaction(async (tx) => {
       // Update status order menjadi Canceled
       await tx.order.updateMany({
         where: {
-          id: parseInt(orderId)
+          id: parseInt(id)
         },
         data: {
           status: "Canceled"
@@ -83,7 +83,7 @@ async function updateProductStockFromOrder(orderId, items) {
       httpStatus: 200
     };
  
-  } catch (error) {
+  } catch (error: any) {
     return {
       success: false,
       error: error.message,
