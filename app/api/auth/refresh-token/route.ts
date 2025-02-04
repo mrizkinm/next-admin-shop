@@ -3,7 +3,7 @@ import { SignJWT, jwtVerify } from 'jose';
 import db from "@/lib/db";
 import { cookies } from 'next/headers';
 
-export async function GET(req) {
+export async function GET(req: Request) {
   const cookieStore = await cookies();
   const refreshToken = cookieStore.get('refreshToken')?.value;
   if (!refreshToken) return NextResponse.json({ msg: 'Token tidak ditemukan' }, { status: 401 });
@@ -18,7 +18,7 @@ export async function GET(req) {
 
     // Cocokkan token dengan token di database
     const user = await db.user.findUnique({
-      where: { id: payload.id },
+      where: { id: Number(payload.id) },
     });
 
     if (!user || user.token !== refreshToken) {
