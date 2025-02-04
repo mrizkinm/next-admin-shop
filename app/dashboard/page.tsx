@@ -16,7 +16,24 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 const Dashboard = () => {
   const { user } = useUserData();
-  const [data, setData] = useState(null);
+  interface DashboardData {
+    summary: {
+      totalCategories: number;
+      totalProducts: number;
+      totalOrders: number;
+      totalCustomers: number;
+    };
+    recentOrders: {
+      id: string;
+      orderTrxId: string;
+      customer: { name: string };
+      totalAmount: number;
+      status: string;
+      createdAt: string;
+    }[];
+  }
+
+  const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
 
   const statusColors = {
@@ -140,7 +157,7 @@ const Dashboard = () => {
                           Rp {new Intl.NumberFormat("en-US").format(order.totalAmount)}
                         </TableCell>
                         <TableCell>
-                          <Badge className={statusColors[order.status] || "bg-gray-500 text-white"}>
+                          <Badge className={statusColors[order.status as keyof typeof statusColors] || "bg-gray-500 text-white"}>
                             {order.status}
                           </Badge>
                         </TableCell>
