@@ -4,10 +4,10 @@ import { z } from "zod";
 import fs from "fs";
 import path from "path";
 
-export async function GET(req, {params}) {
+export async function GET(req: Request, {params} : {params: {productId: string}}) {
   try {
     if (!params.productId) {
-      return new NextResponse.json({ errors: "Harus ada product id" }, {status: 400})
+      return NextResponse.json({ errors: "Harus ada product id" }, {status: 400})
     }
 
     const product = await db.product.findUnique({
@@ -35,22 +35,22 @@ const formSchema = z.object({
   quantity: z.coerce.number().min(0),
 });
 
-export async function PATCH(req, {params}) {
+export async function PATCH(req: Request, {params} : {params: {productId: string}}) {
   try {
     if (!params.productId) {
-      return new NextResponse.json({ errors: "Harus ada product id" }, {status: 400})
+      return NextResponse.json({ errors: "Harus ada product id" }, {status: 400})
     }
     
     const formData = await req.formData();
     
     // Ambil field data dan file
-    const name = formData.get('name');
-    const price = formData.get('price');
-    const categoryId = formData.get('categoryId');
-    const description = formData.get('description');
-    const isFeatured = formData.get('isFeatured');
-    const isArchived = formData.get('isArchived');
-    const quantity = formData.get('quantity');
+    const name = formData.get('name') as string;
+    const price = formData.get('price') as string;
+    const categoryId = formData.get('categoryId') as string;
+    const description = formData.get('description') as string;
+    const isFeatured = formData.get('isFeatured') as string;
+    const isArchived = formData.get('isArchived') as string;
+    const quantity = formData.get('quantity') as string;
 
     const result = formSchema.safeParse({ name, categoryId, price, description, isFeatured, isArchived, quantity });
 
@@ -70,11 +70,11 @@ export async function PATCH(req, {params}) {
         id: parseInt(params.productId)
       },
       data: {
-        name,
-        categoryId: parseInt(categoryId),
-        price: parseInt(price),
-        quantity: parseInt(quantity),
-        description,
+        name: name || '',
+        categoryId: parseInt(categoryId || '0'),
+        price: parseInt(price || '0'),
+        quantity: parseInt(quantity || '0'),
+        description: description || '',
         isFeatured: isFeatured === "true", // Mengkonversi dari string
         isArchived: isArchived === "true", // Mengkonversi dari string
       },
@@ -83,11 +83,11 @@ export async function PATCH(req, {params}) {
     return NextResponse.json({ msg: "Success to update data" });
   } catch (error) {
     console.error('Error patch data', error);
-    return new NextResponse.json({ errors: "Internal server error" }, {status: 500})
+    return NextResponse.json({ errors: "Internal server error" }, {status: 500})
   }
 }
 
-export async function DELETE(req, {params}) {
+export async function DELETE(req: Request, {params} : {params: {productId: string}}) {
   try {
     const paramId = await params.productId;
     const productId = parseInt(paramId);
@@ -136,6 +136,6 @@ export async function DELETE(req, {params}) {
     return NextResponse.json({ errors: "Failed to delete data" }, { status: 500 });
   } catch (error) {
     console.log('Error delete data', error);
-    return new NextResponse.json({ errors: "Internal server error" }, {status: 500})
+    return NextResponse.json({ errors: "Internal server error" }, {status: 500})
   }
 }
