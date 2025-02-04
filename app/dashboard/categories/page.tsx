@@ -10,8 +10,13 @@ import TableSkeleton from '@/components/table-skeleton'
 import TableAction from './components/table-action'
 import ListingPage from './components/listing'
 import { searchParamsCache, serialize } from '@/lib/searchparams'
+import { SearchParams } from 'nuqs'
 
-const CategoriesPage = async (props) => {
+type pageProps = {
+  searchParams: Promise<SearchParams>;
+};
+
+const CategoriesPage = async (props: pageProps) => {
   const searchParams = await props.searchParams;
   // Allow nested RSCs to access the search params (in a type-safe way)
   searchParamsCache.parse(searchParams);
