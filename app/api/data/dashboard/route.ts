@@ -1,7 +1,7 @@
 import db from "@/lib/db";
 import { NextResponse } from "next/server"
 
-export async function GET(req) {
+export async function GET(req: Request) {
   try {
     // Fetch summary data
     const totalCategories = await db.category.count();
