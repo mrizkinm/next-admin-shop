@@ -15,7 +15,7 @@ const formSchema = z.object({
     path: ["confirmPassword"],
   });
 
-export async function PATCH(req) {
+export async function PATCH(req: Request) {
   try {
     const { currentPassword, newPassword, confirmPassword, id } = await req.json();
 
