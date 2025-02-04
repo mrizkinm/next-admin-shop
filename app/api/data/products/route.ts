@@ -6,12 +6,12 @@ import path from "path";
 
 const uploadFolder = path.join(process.cwd(), "public/img/products");
 
-export async function GET(req) {
+export async function GET(req: Request) {
   try {
     // Parse query parameters
     const { searchParams } = new URL(req.url);
-    const page = parseInt(searchParams.get("page")) || 1;
-    const limit = parseInt(searchParams.get("limit")) || 10;
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "10");
     const categories = searchParams.get("categories");
     const search = searchParams.get("search");
 
@@ -40,7 +40,7 @@ export async function GET(req) {
       include: { category: true, images: true },
       skip: (page - 1) * limit,
       take: limit,
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: "asc" },
     });
 
     // Mock current time
@@ -85,18 +85,18 @@ const formSchema = z.object({
   quantity: z.coerce.number().min(0),
 });
 
-export async function POST(req) {
+export async function POST(req: Request) {
   try {
     const formData = await req.formData();
     
     // Ambil field data dan file
-    const name = formData.get('name');
-    const price = formData.get('price');
-    const categoryId = formData.get('categoryId');
-    const description = formData.get('description');
-    const isFeatured = formData.get('isFeatured');
-    const isArchived = formData.get('isArchived');
-    const quantity = formData.get('quantity');
+    const name = formData.get('name') as string;
+    const price = formData.get('price') as string;
+    const categoryId = formData.get('categoryId') as string;
+    const description = formData.get('description') as string;
+    const isFeatured = formData.get('isFeatured') as string;
+    const isArchived = formData.get('isArchived') as string;
+    const quantity = formData.get('quantity') as string;
     
     const images = [];
     for (let i = 0; i < formData.getAll('images').length; i++) {
@@ -131,12 +131,14 @@ export async function POST(req) {
     // Proses dan simpan gambar ke server
     const imageUrls = [];
     for (let image of images) {
-      const fileName = `${Date.now()}-${image.name}`;
-      const filePath = path.join(uploadFolder, fileName);
-      const buffer = await image.arrayBuffer();  // Ambil buffer dari file
-
-      fs.writeFileSync(filePath, Buffer.from(buffer));  // Menyimpan gambar ke disk
-      imageUrls.push(`/img/products/${fileName}`);
+      if (image instanceof File) {
+        const fileName = `${Date.now()}-${image.name}`;
+        const filePath = path.join(uploadFolder, fileName);
+        const buffer = await image.arrayBuffer();  // Ambil buffer dari file
+  
+        fs.writeFileSync(filePath, Buffer.from(buffer));  // Menyimpan gambar ke disk
+        imageUrls.push(`/img/products/${fileName}`);
+      }
     }
 
     // Menyimpan data gambar terkait produk
