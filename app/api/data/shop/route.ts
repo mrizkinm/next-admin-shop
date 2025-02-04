@@ -6,7 +6,7 @@ import path from "path";
 
 const uploadFolder = path.join(process.cwd(), "public/img");
 
-export async function GET(req) {
+export async function GET(req: Request) {
   try {
     const shop = await db.shop.findUnique({
       where: {
@@ -32,16 +32,16 @@ const formSchema = z.object({
   images: z.any()
 });
 
-export async function PATCH(req) {
+export async function PATCH(req: Request) {
   try {
     const formData = await req.formData();
     
     // Ambil field data dan file
-    const name = formData.get('name');
-    const phone = formData.get('phone');
-    const address = formData.get('address');
-    const description = formData.get('description');
-    const email = formData.get('email');
+    const name = formData.get('name') as string;
+    const phone = formData.get('phone') as string;
+    const address = formData.get('address') as string;
+    const description = formData.get('description') as string;
+    const email = formData.get('email') as string;
 
     const images = [];
     for (let i = 0; i < formData.getAll('images').length; i++) {
@@ -64,12 +64,14 @@ export async function PATCH(req) {
     // Proses dan simpan gambar ke server
     const imageUrls = [];
     for (let image of images) {
-      const fileName = `${Date.now()}-${image.name}`;
-      const filePath = path.join(uploadFolder, fileName);
-      const buffer = await image.arrayBuffer();  // Ambil buffer dari file
+      if (image instanceof File) {
+        const fileName = `${Date.now()}-${image.name}`;
+        const filePath = path.join(uploadFolder, fileName);
+        const buffer = await image.arrayBuffer();  // Ambil buffer dari file
 
-      fs.writeFileSync(filePath, Buffer.from(buffer));  // Menyimpan gambar ke disk
-      imageUrls.push(`/img/${fileName}`);
+        fs.writeFileSync(filePath, Buffer.from(buffer));  // Menyimpan gambar ke disk
+        imageUrls.push(`/img/${fileName}`);
+      }
     }
 
     const shop = await db.shop.update({
