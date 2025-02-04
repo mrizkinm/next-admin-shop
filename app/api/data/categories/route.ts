@@ -6,12 +6,12 @@ import path from "path";
 
 const uploadFolder = path.join(process.cwd(), "public/img/categories");
 
-export async function GET(req) {
+export async function GET(req: Request) {
   try {
     // Parse query parameters
     const { searchParams } = new URL(req.url);
-    const page = parseInt(searchParams.get("page")) || 1;
-    const limit = parseInt(searchParams.get("limit")) || 10;
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "10");
     const search = searchParams.get("search");
 
     // Query products from database
@@ -26,7 +26,7 @@ export async function GET(req) {
       where: whereClause,
       skip: (page - 1) * limit,
       take: limit,
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: "asc" },
     });
 
     // Mock current time
@@ -71,12 +71,15 @@ const formSchema = z.object({
   }),
 });
 
-export async function POST(req) {
+export async function POST(req: Request) {
   try {
     const formData = await req.formData();
     
     // Ambil field data dan file
-    const name = formData.get('name');
+    const name = formData.get('name') as string;
+    if (!name) {
+      return NextResponse.json({ errors: { name: "Name is required" } }, { status: 400 });
+    }
     
     const images = [];
     for (let i = 0; i < formData.getAll('images').length; i++) {
@@ -99,12 +102,14 @@ export async function POST(req) {
     // Proses dan simpan gambar ke server
     const imageUrls = [];
     for (let image of images) {
-      const fileName = `${Date.now()}-${image.name}`;
-      const filePath = path.join(uploadFolder, fileName);
-      const buffer = await image.arrayBuffer();  // Ambil buffer dari file
-
-      fs.writeFileSync(filePath, Buffer.from(buffer));  // Menyimpan gambar ke disk
-      imageUrls.push(`/img/categories/${fileName}`);
+      if (image instanceof File) {
+        const fileName = `${Date.now()}-${image.name}`;
+        const filePath = path.join(uploadFolder, fileName);
+        const buffer = await image.arrayBuffer();  // Ambil buffer dari file
+        
+        fs.writeFileSync(filePath, Buffer.from(buffer));  // Menyimpan gambar ke disk
+        imageUrls.push(`/img/categories/${fileName}`);
+      }
     }
 
     const category = await db.category.create({
