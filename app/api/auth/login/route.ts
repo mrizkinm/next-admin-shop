@@ -9,7 +9,7 @@ const formSchema = z.object({
   password: z.string().min(6, "Password harus memiliki minimal 6 karakter"),
 });
 
-export async function POST(req) {
+export async function POST(req: Request) {
   try {
     const { email, password } = await req.json();
 
