@@ -1,36 +1,86 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Online Shop Admin Dashboard with Next.js 
 
-## Getting Started
+This project is a web application for the admin dashboard of an online shop, built with Next.js and TypeScript.
 
-First, run the development server:
+## Technologies Used
+
+- **Next.js**: React framework for building server-side rendered applications.
+- **Prisma**: Database ORM to connect with your database and handle schema management.
+- **Tailwind CSS**: Utility-first CSS framework for fast UI development.
+- **ShadCN**: Pre-built UI components based on Radix UI and Tailwind CSS.
+- **Zod**: TypeScript-first schema validation.
+- **React Hook Form**: For managing form state and validation.
+- **bcryptjs**: Library for hashing passwords securely.
+- **JWT**: For handling authentication and authorization.
+
+## Installation
+
+To get started, clone this repository and install the dependencies.
+
+### Clone the Repository
+
+```bash
+git clone https://github.com/mrizkinm/next-admin-shop.git
+cd next-admin-shop
+```
+
+### Install Dependencies
+
+Run the following command to install the required dependencies:
+
+```bash
+npm install
+```
+
+Or, if you're using Yarn:
+
+```bash
+yarn install
+```
+
+## Prisma Schema
+The `prisma/schema.prisma` file is not included in the repository. Please contact the author to obtain it.
+
+## Development
+
+To run the application locally in development mode:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Or with Yarn:
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+```bash
+yarn dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The application will be available at [http://localhost:3000](http://localhost:3000).
 
-## Learn More
+## Production Build
 
-To learn more about Next.js, take a look at the following resources:
+To create a production build, run the following command:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run build
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Then, start the production server:
 
-## Deploy on Vercel
+```bash
+npm start
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Features
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Admin Authentication**: Secure login using JWT and bcrypt.
+- **User Management**: View and manage registered users.
+- **Product Management**: Add, edit, and delete products.
+- **Responsive Design**: Fully responsive UI with Tailwind CSS and ShadCN components.
+
+## Contact
+For any questions or to obtain the Prisma schema, please contact the author.
+
+---
+If you have any questions or would like to contribute, feel free to open an issue or submit a pull request!
+
