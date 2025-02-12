@@ -3,13 +3,13 @@ import { NextResponse } from "next/server"
 import { z } from "zod";
 
 const formSchema = z.object({
-    name: z.string()
-      .min(3, { message: 'Nama minimal 3 karakter' })
-      .max(50, { message: 'Nama maksimal 50 karakter' }),
-    email: z.string()
-      .email({ message: 'Format email tidak valid' }),
-    id: z.number().int()
-  });
+  name: z.string()
+    .min(3, { message: 'Nama minimal 3 karakter' })
+    .max(50, { message: 'Nama maksimal 50 karakter' }),
+  email: z.string()
+    .email({ message: 'Format email tidak valid' }),
+  id: z.number().int()
+});
 
 export async function PATCH(req: Request) {
   try {
