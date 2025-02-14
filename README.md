@@ -10,7 +10,7 @@ This project is a web application for the admin dashboard of an online shop, bui
 - **ShadCN**: Pre-built UI components based on Radix UI and Tailwind CSS.
 - **Zod**: TypeScript-first schema validation.
 - **React Hook Form**: For managing form state and validation.
-- **bcryptjs**: Library for hashing passwords securely.
+- **bcrypt**: Library for hashing passwords securely.
 - **JWT**: For handling authentication and authorization.
 
 ## Installation
