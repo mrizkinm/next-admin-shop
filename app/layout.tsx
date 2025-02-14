@@ -3,8 +3,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { Toaster } from 'react-hot-toast';
 import NextTopLoader from "nextjs-toploader";
-import { getStoreInfo } from "@/lib/api";
-import { StoreProvider } from "@/context/store-context";
+import NextAuthProvider from "@/providers/next-auth-provider";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -18,35 +17,26 @@ const montserrat = Montserrat({
   variable: "--font-montserrat",
 });
 
-export async function generateMetadata() {
-  // Ambil data store secara dinamis
-  const store = await getStoreInfo();
-  const storeInfo = store;
-
-  return {
-    title: storeInfo.name,
-    description: storeInfo.description,
-  };
-}
+export const metadata = {
+  title: 'Admin Shop',
+  description: 'Halaman dashboard admin',
+};
 
 export default async function RootLayout({ children }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const store = await getStoreInfo();
-  const storeInfo = store;
-
   return (
     <html lang="en">
       <body
         className={`${poppins.variable} ${montserrat.variable} antialiased overflow-hidden`}
       >
-        <NextTopLoader showSpinner={false} />
-        <StoreProvider storeInfo={storeInfo}>
+        <NextAuthProvider>
+          <NextTopLoader showSpinner={false} />
           <ThemeProvider attribute="class" defaultTheme="system">
             <Toaster />
             {children}
           </ThemeProvider>
-        </StoreProvider>
+        </NextAuthProvider>
       </body>
     </html>
   );
