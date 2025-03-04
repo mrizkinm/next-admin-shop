@@ -12,6 +12,7 @@ This project is a web application for the admin dashboard of an online shop, bui
 - **React Hook Form**: For managing form state and validation.
 - **bcrypt**: Library for hashing passwords securely.
 - **JWT**: For handling authentication and authorization.
+- **Zustand**: For handling state management.
 
 ## Installation
 
