@@ -12,6 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Textarea } from "@/components/ui/textarea"
 import { useErrorHandler } from "@/hooks/use-error-handler";
 import { Customer } from "@/app/types";
+import { useSession } from "next-auth/react";
 
 interface CustomerFormProps {
   initialData: Customer | null;
@@ -30,6 +31,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({initialData}) => {
   const router = useRouter();
   const params = useParams();
   const { handleError } = useErrorHandler();
+  const { data: session } = useSession();
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -47,22 +49,26 @@ const CustomerForm: React.FC<CustomerFormProps> = ({initialData}) => {
     try {
       let response;
       if (initialData) {
-        response = await fetch(`/api/data/customers/${params.customerId}`, {
+        response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/customer/${params.customerId}`, {
           method: "PATCH",
           body: JSON.stringify(data),
           headers: {
             "Content-Type": "application/json",
+            "Authorization": `Bearer ${session?.token}`
           }
         });
       } else {
-        response = await fetch("/api/data/customers", {
+        response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/customer`, {
           method: "POST",
           body: JSON.stringify(data),
           headers: {
             "Content-Type": "application/json",
+            "Authorization": `Bearer ${session?.token}`
           }
         });
       }
+
+      const responseData = await response.json();
 
       if (response.ok) {
         toast.success('Success to insert data');
@@ -70,9 +76,8 @@ const CustomerForm: React.FC<CustomerFormProps> = ({initialData}) => {
           router.push("/dashboard/customers");
         }, 1000);
       } else {
-        const { errors } = await response.json();
         // Menampilkan error toast untuk setiap field yang gagal
-        handleError(errors);
+        handleError(responseData.errors);
       }
     } catch (error) {
       console.log(error)

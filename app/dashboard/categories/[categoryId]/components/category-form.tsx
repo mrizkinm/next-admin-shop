@@ -12,6 +12,7 @@ import React, { useState } from 'react';
 import FileInput from '@/components/file-input';
 import { useErrorHandler } from '@/hooks/use-error-handler';
 import { Category } from '@/app/types';
+import { useSession } from 'next-auth/react';
 
 interface CategoryFormProps {
   initialData: Category | null;
@@ -34,6 +35,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({initialData}) => {
   const router = useRouter();
   const params = useParams();
   const { handleError } = useErrorHandler();
+  const { data: session } = useSession();
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -45,23 +47,46 @@ const CategoryForm: React.FC<CategoryFormProps> = ({initialData}) => {
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     setLoading(true);
-    const formData = new FormData();
-    formData.append('name', data.name);
-
     try {
       let response;
       if (initialData) {
-        response = await fetch(`/api/data/categories/${params.categoryId}`, {
+        response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/category/${params.categoryId}`, {
           method: "PATCH",
-          body: formData
+          body: JSON.stringify(data),
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session?.token}`
+          }
         });
       } else {
-        formData.append('images', data.images[0]);
-        response = await fetch("/api/data/categories", {
+        // Append images to the FormData
+        const base64Images = [];
+
+        for (const file of data.images) {
+          const reader = new FileReader();
+          const base64Promise = new Promise((resolve) => {
+            reader.onloadend = () => resolve(reader.result);
+            reader.readAsDataURL(file);
+          });
+          base64Images.push(base64Promise);
+        }
+
+        // Menunggu semua Promise selesai
+        const resolvedBase64Images = await Promise.all(base64Images);
+        // Update data.images dengan base64 hasil konversi
+        data.images = resolvedBase64Images;
+
+        response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/category`, {
           method: "POST",
-          body: formData
+          body: JSON.stringify(data),
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session?.token}`
+          }
         });
       }
+
+      const responseData = await response.json();
 
       if (response.ok) {
         toast.success('Success to insert data');
@@ -69,11 +94,11 @@ const CategoryForm: React.FC<CategoryFormProps> = ({initialData}) => {
           router.push("/dashboard/categories");
         }, 1000);
       } else {
-        const { errors } = await response.json();
         // Menampilkan error toast untuk setiap field yang gagal
-        handleError(errors);
+        handleError(responseData.errors);
       }
     } catch (error) {
+      console.log('errrorr');
       console.log(error)
     } finally {
       setLoading(false);

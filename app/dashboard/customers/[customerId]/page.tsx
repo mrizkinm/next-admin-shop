@@ -6,9 +6,9 @@ import PageContainer from '@/components/page-container';
 import { getDetailCustomer } from '@/lib/api';
 
 interface CustomersPageProps {
-  params: {
+  params: Promise<{
     customerId: string;
-  }
+  }>
 }
 
 const AddCustomers: React.FC<CustomersPageProps> = async ({params}) => {

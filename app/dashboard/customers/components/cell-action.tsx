@@ -9,6 +9,7 @@ import { useState } from "react"
 import { AlertModal } from "@/components/alert-modal"
 import Link from "next/link"
 import { Customer } from "@/app/types"
+import { useSession } from "next-auth/react"
 
 interface CustomerProps {
   data: Customer;
@@ -17,13 +18,18 @@ interface CustomerProps {
 export const CellAction: React.FC<CustomerProps> = ({data}) => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
-  const router = useRouter()
+  const router = useRouter();
+  const { data: session } = useSession();
 
   const onDelete = async () => {
     try {
       setLoading(true)
-      const response = await fetch(`/api/data/customers/${data.id}`, {
-        method: "DELETE"
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/customer/${data.id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session?.token}`
+        }
       });
 
       const responseData = await response.json();

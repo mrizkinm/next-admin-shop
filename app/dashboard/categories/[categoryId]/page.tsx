@@ -2,13 +2,12 @@ import Heading from '@/components/heading'
 import { Separator } from '@/components/ui/separator'
 import React from "react";
 import CategoryForm from './components/category-form';
-import db from "@/lib/db";
 import PageContainer from '@/components/page-container';
-
+import { getDetailCategory } from '@/lib/api';
 interface CategoryPageProps {
-  params: {
+  params: Promise<{
     categoryId: string;
-  }
+  }>
 }
 
 const AddCategories: React.FC<CategoryPageProps> = async ({params}) => {
@@ -19,9 +18,7 @@ const AddCategories: React.FC<CategoryPageProps> = async ({params}) => {
   const description = isEdit ? 'Edit existing category' : 'Add new category';
 
   const category = isEdit
-  ? await db.category.findUnique({
-      where: { id: parseInt(categoryId) }
-    })
+  ? await getDetailCategory(parseInt(categoryId))
   : null;
 
   return (

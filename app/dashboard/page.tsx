@@ -1,7 +1,6 @@
 "use client"
 
 import React, { useEffect, useState} from 'react'
-import { useUserData } from '../../context/user-data-context';
 import {
   Card,
   CardContent,
@@ -13,9 +12,12 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { Boxes, List, ShoppingBag, Users2 } from 'lucide-react';
 import { Skeleton } from "@/components/ui/skeleton";
+import { useSession } from 'next-auth/react';
+import { useErrorHandler } from '@/hooks/use-error-handler';
 
 const Dashboard = () => {
-  const { user } = useUserData();
+  const { data: session, status } = useSession();
+  const user = session?.user;
   interface DashboardData {
     summary: {
       totalCategories: number;
@@ -35,6 +37,7 @@ const Dashboard = () => {
 
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const { handleError } = useErrorHandler();
 
   const statusColors = {
     Pending: 'bg-yellow-500 text-white hover:bg-yellow-600',
@@ -44,19 +47,35 @@ const Dashboard = () => {
 
   const getData = async () => {
     try {
-      const response = await fetch("/api/data/dashboard");
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/order/summary`,{
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session?.token}`
+        }
+      });
+
       const responseData = await response.json();
-      setData(responseData);
+
+      if (response.ok) {
+        setData(responseData);
+      } else {
+        // Menampilkan error toast untuk setiap field yang gagal
+        handleError(responseData.errors);
+        throw new Error("Gagal mengambil data");
+      }
     } catch (error) {
-      console.error("Failed to fetch dashboard data:", error);
+      console.log(error);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    getData();
-  }, []);
+    if (status === "authenticated") {
+      getData();
+    }
+  }, [status]);
 
   return (
     <PageContainer scrollable={true}>
